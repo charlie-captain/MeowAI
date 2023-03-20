@@ -41,7 +41,6 @@ def detect(image_path):
         else:
             return False
     except:
-
         return False
 
 
