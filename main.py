@@ -1,4 +1,6 @@
 import os
+import re
+import shutil
 import time
 
 import torch
@@ -44,10 +46,25 @@ def detect(image_path):
         return False
 
 
+def get_filelist(dir):
+    Filelist = []
+    for home, dirs, files in os.walk(dir):
+        for filename in files:
+            # 判断是否是图片格式
+            if filename.endswith(".png") or filename.endswith(".jpg") or filename.endswith(".jpeg"):
+                # 文件名列表，包含完整路径
+                Filelist.append(os.path.join(home, filename))
+    return Filelist
+
+
 if __name__ == '__main__':
     init_model()
-    image_path = './test-dog.jpg'
-    detect(image_path)
-    image_path = './test-meow.jpg'
-    detect(image_path)
-    time.sleep(2000000)
+    base = './data'
+    file_list = get_filelist(base)
+    for file in file_list:
+        print(file)
+        is_cat = detect(file)
+        if is_cat:
+            file_name = os.path.basename(file)
+            new_file_path = './results/' + file_name
+            shutil.copy2(file, new_file_path)
