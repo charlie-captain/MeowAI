@@ -1,5 +1,5 @@
 # 使用官方 Python 镜像作为基础镜像
-FROM python:3.8
+FROM python:latest
 
 # 将当前目录下的文件都复制到 Docker 镜像的 /app 目录下
 COPY . /app
