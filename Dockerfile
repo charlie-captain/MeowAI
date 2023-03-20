@@ -10,7 +10,7 @@ WORKDIR /app
 # 安装所需依赖
 RUN pip install -r requirements.txt \
     && pip install opencv-python-headless \
-    && pip install -r ./yolov5/requirements.txt \
+    && pip install -r yolov5/requirements.txt \
     && apt update \
     && apt-get install ffmpeg libsm6 libxext6 -y
 #    && apt-get install libgl1-mesa-glx -y
