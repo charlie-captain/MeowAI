@@ -1,5 +1,5 @@
-git reset --h origin/main
-git pull
+#git reset --h origin/main
+#git pull
 chmod 777 ./deploy.sh
 docker build --no-cache -t meowai_image .
 docker stop meow_ai || true
