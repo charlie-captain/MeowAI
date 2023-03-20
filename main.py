@@ -66,4 +66,5 @@ if __name__ == '__main__':
         if is_cat:
             file_name = os.path.basename(file)
             new_file_path = './results/' + file_name
-            shutil.copy2(file, new_file_path)
+            # shutil.copy2(file, new_file_path)
+
