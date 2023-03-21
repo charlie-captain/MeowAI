@@ -1,5 +1,5 @@
 # 使用官方 Python 镜像作为基础镜像
-FROM python:latest
+FROM python:3.8-buster
 
 # 将当前目录下的文件都复制到 Docker 镜像的 /app 目录下
 COPY . /app
@@ -8,12 +8,13 @@ COPY . /app
 WORKDIR /app
 
 # 安装所需依赖
-RUN pip install --upgrade pip \
-    && pip install -r requirements.txt \
+RUN pip install -r requirements.txt \
     && pip install opencv-python-headless \
     && pip install -r yolov5/requirements.txt \
-    && apt update \
-    && apt-get install ffmpeg libsm6 libxext6 -y
+    && pip install torch==1.13.0 torchvision==0.14.0
+#    && apt update \
+#    && apt-get install ffmpeg libsm6 libxext6 -y \
+
 #    && apt-get install libgl1-mesa-glx -y
 
 # 设置环境变量
