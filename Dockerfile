@@ -8,7 +8,8 @@ COPY . /app
 WORKDIR /app
 
 # 安装所需依赖
-RUN pip install -r requirements.txt \
+RUN pip install --upgrade pip \
+    && pip install -r requirements.txt \
     && pip install opencv-python-headless \
     && pip install -r yolov5/requirements.txt \
     && pip install torch==1.13.0 torchvision==0.14.0
