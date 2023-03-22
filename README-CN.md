@@ -16,7 +16,7 @@
    运行Docker容器
 
    ```shell 
-   docker run -it --name meow --network host -e cookie=xxx -e token=xxx meowai_image
+   docker run -it --name meowai --network host -e cookie="xxx" -e token="xxx" meowai_image
    ```
    cookie-> Cookie: __SSID...
 
