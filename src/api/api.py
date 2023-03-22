@@ -37,6 +37,8 @@ def get_tags():
     if data['success']:
         list = data['data']['list']
         return list
+    else:
+        logger.info(response.content)
     return []
 
 
@@ -179,6 +181,7 @@ def get_tag_id_by_name(tag_name):
 
 def read_done_list():
     try:
+        logger.info('读取已完成列表')
         done_list_file = get_done_list_file_path()
         with open(done_list_file, 'r') as f:
             data = json.load(f)
