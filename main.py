@@ -102,8 +102,7 @@ def init_log():
 if __name__ == '__main__':
     init_log()
     init_model()
-    # base = './data'
-    base = '/Users/charlie/Downloads'
+    base = './data'
     file_list = get_filelist(base)
     detect_file_list = []
     for file in file_list:
