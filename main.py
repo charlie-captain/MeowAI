@@ -8,4 +8,3 @@ if __name__ == '__main__':
     logger.init_log()
     detect.init_model()
     api.start()
-    time.sleep(100000000)
