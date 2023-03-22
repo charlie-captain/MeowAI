@@ -18,7 +18,7 @@ Detect cat and tag image on synology photos by yolov5
 4. run docker container 
 
     ```shell
-    docker run -it --name meow --network host -e cookie=xxx -e token=xxx meowai_image
+    docker run -it --name meowai --env cookie="xxx" --env token="xxx" --network host meowai_image
     ```
     
     cookie-> Cookie: __SSID... 
