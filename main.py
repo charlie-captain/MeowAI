@@ -103,16 +103,20 @@ if __name__ == '__main__':
     init_log()
     init_model()
     base = './data'
-    file_list = get_filelist(base)
     detect_file_list = []
-    for file in file_list:
-        is_cat = detect(file)
-        if is_cat:
-            file_name = os.path.basename(file)
-            new_file_path = './results/' + file_name
-            # shutil.copy2(file, new_file_path)
-            detect_file = DetectFile(file_name, file_path=file)
-            detect_file_list.append(detect_file)
+    for home, dirs, files in os.walk(dir):
+        for filename in files:
+            # 判断是否是图片格式
+            if filename.endswith(".png") or filename.endswith(".jpg") or filename.endswith(".jpeg"):
+                # 文件名列表，包含完整路径
+                file = os.path.join(home, filename)
+                is_cat = detect(file)
+                if is_cat:
+                    file_name = os.path.basename(file)
+                    new_file_path = './results/' + file_name
+                    # shutil.copy2(file, new_file_path)
+                    detect_file = DetectFile(file_name, file_path=file)
+                    detect_file_list.append(detect_file)
 
     json_str = json.dumps([f.__dict__ for f in detect_file_list])
     with open("./results/result.json", "w") as f:
