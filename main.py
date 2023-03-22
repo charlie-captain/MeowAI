@@ -104,7 +104,7 @@ if __name__ == '__main__':
     init_model()
     base = './data'
     detect_file_list = []
-    for home, dirs, files in os.walk(dir):
+    for home, dirs, files in os.walk(base):
         for filename in files:
             # 判断是否是图片格式
             if filename.endswith(".png") or filename.endswith(".jpg") or filename.endswith(".jpeg"):
