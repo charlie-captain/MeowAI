@@ -217,8 +217,8 @@ def add_to_done_list(list):
 def start():
     global cookie
     global token
-    cookie = os.environ.get('cookie')
-    token = os.environ.get('token')
+    cookie = os.environ['cookie']
+    token = os.environ['token']
     read_done_list()
     global tags
     tags = get_tags()
