@@ -100,7 +100,7 @@ def get_photos():
         add_to_done_list(list)
         return True
     else:
-        logger.info(response)
+        logger.info(response.content)
         return False
 
 
