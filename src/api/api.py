@@ -10,12 +10,7 @@ from src.log.logger import logger
 base_url = 'http://127.0.0.1:5000'
 cookie = None
 token = None
-headers = {
-    'Cookie': cookie,
-    'X-SYNO-TOKEN': token,
-    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36',
-}
-
+headers = None
 tags = []
 offset = 0
 limit = 1000
@@ -217,8 +212,14 @@ def add_to_done_list(list):
 def start():
     global cookie
     global token
+    global headers
     cookie = os.environ['cookie']
     token = os.environ['token']
+    headers = {
+        'Cookie': cookie,
+        'X-SYNO-TOKEN': token,
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36',
+    }
     read_done_list()
     global tags
     tags = get_tags()
