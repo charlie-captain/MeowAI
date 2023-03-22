@@ -14,14 +14,17 @@ headers = None
 tags = []
 offset = 0
 limit = 1000
-
 done_list = []
+# 识别文件夹
+mode = 'person'
+# api 前缀
+api_pre = None
 
 
 def get_tags():
-    url = f'{base_url}/webapi/entry.cgi/SYNO.FotoTeam.Browse.GeneralTag'
+    url = f'{base_url}/webapi/entry.cgi/{api_pre}.Browse.GeneralTag'
     data = {
-        'api': 'SYNO.FotoTeam.Browse.GeneralTag',
+        'api': f'{api_pre}.Browse.GeneralTag',
         'method': 'list',
         'version': '1',
         'limit': '500',
@@ -38,9 +41,9 @@ def get_tags():
 
 
 def get_time_line():
-    url = f'{base_url}/webapi/entry.cgi/SYNO.FotoTeam.Browse.Timeline'
+    url = f'{base_url}/webapi/entry.cgi/{api_pre}.Browse.Timeline'
     data = {
-        'api': 'SYNO.FotoTeam.Browse.Timeline',
+        'api': f'{api_pre}.Browse.Timeline',
         'method': 'get',
         'version': '2',
         'timeline_group_unit': 'day'
@@ -64,9 +67,9 @@ def start_indexing():
 def get_photos():
     global url, data
     logger.info(f'current offset = {offset} limit = {limit}')
-    url = f'{base_url}/webapi/entry.cgi/SYNO.FotoTeam.Browse.Item'
+    url = f'{base_url}/webapi/entry.cgi/{api_pre}.Browse.Item'
     data = {
-        "api": "SYNO.FotoTeam.Browse.Item",
+        "api": f"{api_pre}.Browse.Item",
         "method": "list",
         "version": "1",
         "offset": offset,
@@ -111,7 +114,7 @@ def detect_image(image_content):
 
 def get_photo_by_id(id, cache_key, headers):
     # print(f'{id}  {cache_key}')
-    url = f'{base_url}/webapi/entry.cgi?id={id}&cache_key={cache_key}&type=unit&size=sm&api=SYNO.FotoTeam.Thumbnail&method=get&version=2&SynoToken=NXibb.RkEVsCY'
+    url = f'{base_url}/webapi/entry.cgi?id={id}&cache_key={cache_key}&type=unit&size=sm&api={api_pre}.Thumbnail&method=get&version=2&SynoToken=NXibb.RkEVsCY'
     # print(url)
     headers[
         'Accept'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
@@ -125,9 +128,9 @@ def get_photo_by_id(id, cache_key, headers):
 
 
 def create_tag(tag_name):
-    url = f'{base_url}/webapi/entry.cgi/SYNO.FotoTeam.Browse.GeneralTag'
+    url = f'{base_url}/webapi/entry.cgi/{api_pre}.Browse.GeneralTag'
     data = {
-        'api': 'SYNO.FotoTeam.Browse.GeneralTag',
+        'api': f'{api_pre}.Browse.GeneralTag',
         'method': 'create',
         'version': '1',
         'name': tag_name,
@@ -148,9 +151,9 @@ def bind_tag(id, tag_name):
         create_tag(tag_name)
         tag_id = get_tag_id_by_name(tag_name)
 
-    url = f'{base_url}/webapi/entry.cgi/SYNO.FotoTeam.Browse.Item'
+    url = f'{base_url}/webapi/entry.cgi/{api_pre}.Browse.Item'
     data = {
-        'api': 'SYNO.FotoTeam.Browse.Item',
+        'api': f'{api_pre}.Browse.Item',
         'method': 'add_tag',
         'version': '1',
         'id': f'[{id}]',
@@ -209,17 +212,28 @@ def add_to_done_list(list):
         json.dump(done_list, f)
 
 
-def start():
+def init_var():
     global cookie
     global token
     global headers
+    global mode
+    global api_pre
     cookie = os.environ['cookie']
     token = os.environ['token']
+    mode = os.environ['mode']
     headers = {
         'Cookie': cookie,
         'X-SYNO-TOKEN': token,
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36',
     }
+    if mode == 'person':
+        api_pre = 'SYNO.Foto'
+    else:
+        api_pre = 'SYNO.FotoTeam'
+
+
+def start():
+    init_var()
     read_done_list()
     global tags
     tags = get_tags()
