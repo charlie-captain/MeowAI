@@ -2,6 +2,8 @@
 
 Detect cat and tag image on synology photos by yolov5
 
+[中文文档](./README-CN.md)
+
 ## Usage
 
 ### Docker
