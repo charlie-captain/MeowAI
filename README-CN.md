@@ -4,6 +4,10 @@
 
 ## 使用方法
 
+### Synology DSM
+
+目前还在精简镜像体积，请先使用下面方法
+
 ### Docker
 
 1. 安装Docker
@@ -21,3 +25,9 @@
    cookie-> Cookie: __SSID...
 
    token-> X-SYNO-TOKEN: xxxxx
+
+## Dev
+
+目前使用的是Yolov5s.pt数据模型，可以更换更大的数据模型，更多详情请看[Yolov5-Github](https://github.com/ultralytics/yolov5).
+
+

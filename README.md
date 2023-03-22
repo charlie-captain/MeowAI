@@ -8,8 +8,7 @@ Detect cat and tag image on synology photos by yolov5
 
 ### Synology DSM
 
-1. open docker
-2. 
+Making image smaller now, will be updated.
 
 ### Docker shell
 
