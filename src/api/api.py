@@ -220,7 +220,7 @@ def init_var():
     global api_pre
     cookie = os.environ['cookie']
     token = os.environ['token']
-    mode = os.environ['mode']
+    mode = os.environ.get('mode','person')
     headers = {
         'Cookie': cookie,
         'X-SYNO-TOKEN': token,
