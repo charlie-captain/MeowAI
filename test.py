@@ -7,7 +7,7 @@ from src.api import api
 
 
 def main():
-    base_url='http://127'
+    base_url='http://127.0.0.1:5000'
     api_pre = 'SYNO.FotoTeam'
     cookie = os.environ['cookie']
     token = os.environ['token']
