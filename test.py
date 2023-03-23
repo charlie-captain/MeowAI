@@ -1,9 +1,6 @@
-import json
 import os
 
 import requests
-
-from src.api import api
 
 
 def main():
