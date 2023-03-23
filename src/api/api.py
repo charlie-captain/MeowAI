@@ -6,8 +6,10 @@ import requests
 
 from src.detect.detect import detect
 from src.log.logger import logger
+from src.log import logger as log
 
-base_url = 'http://127.0.0.1:5000'
+# base_url = 'http://127.0.0.1:5000'
+base_url = 'http://192.168.5.144:5000'
 cookie = None
 token = None
 headers = None
@@ -100,7 +102,7 @@ def get_photos():
         #     'start_time':,
         # 'end_time':
     }
-    # logger.info(headers)
+    logger.info(headers)
     response = requests.post(url, data=data, headers=headers)
     data = json.loads(response.content)
     # logger.info(data)
@@ -251,4 +253,6 @@ def start():
 
 
 if __name__ == '__main__':
+    log.init_log()
+    init_var()
     start_indexing()
