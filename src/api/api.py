@@ -8,8 +8,7 @@ from src.detect.detect import detect
 from src.log.logger import logger
 from src.log import logger as log
 
-# base_url = 'http://127.0.0.1:5000'
-base_url = 'http://192.168.5.144:5000'
+base_url = 'http://127.0.0.1:5000'
 cookie = None
 token = None
 headers = None
