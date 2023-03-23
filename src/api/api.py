@@ -259,13 +259,16 @@ def init_var():
     global api_pre
     global username
     global pwd
+    global base_url
     username = os.environ['user']
     pwd = os.environ['pwd']
     mode = os.environ.get('mode', 'person')
+    ip = os.environ.get('ip', '127.0.0.1:5000')
     if mode == 'person':
         api_pre = 'SYNO.Foto'
     else:
         api_pre = 'SYNO.FotoTeam'
+    base_url = f'http://{ip}'
 
 
 def start():

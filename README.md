@@ -27,11 +27,12 @@ Making image smaller now, will be updated.
     docker run -it --name meowai -e user="xxx" -e pwd="xxx" -e mode="person" --network host meowai_image
     ```
 
-    | Argument | Description             | Demo               | Require            |
-    | -------- | ----------------------- | ------------------ | ------------------ |
-    | user     | login user              |      -              | true               |
-    | pwd      | login password          |      -              | true               |
-    | mode     | person dir or share dir | "person" or"share" | false(默认 person) |
+    | Argument | Description             | Demo               | Require                       |
+    | -------- | ----------------------- | ------------------ | ----------------------------- |
+    | user     | login user              | -                  | true                          |
+    | pwd      | login password          | -                  | true                          |
+    | ip       | nas ip                  | 0.0.0.0:5000       | false(default 127.0.0.1:5000) |
+    | mode     | person dir or share dir | "person" or"share" | false(default person)         |
    
 
 ## Dev
