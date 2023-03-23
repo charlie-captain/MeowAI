@@ -23,11 +23,11 @@
     docker run -it --name meowai -e cookie="xxx" -e token="xxx" -e mode="person" --network host meowai_image
     ```
 
-    | 参数   | 说明                     | 例子               | 必选           |
-    | ------ | ------------------------ | ------------------ | -------------- |
-    | cookie | DSM的请求 Cookie         | __SSID...          | true           |
-    | token  | 同上, X-SYNO-TOKEN:      | Nxxxx.xxxxx        | true           |
-    | mode   | 个人文件夹还是共享文件夹 | "person" or"share" | default person |
+    | 参数   | 说明                     | 例子               | 必选                    |
+    | ------ | ------------------------ |-----------------------| -------------- |
+    | cookie | DSM的请求 Cookie         | __SSID...          | true                  |
+    | token  | 同上, X-SYNO-TOKEN:      | Nxxxx.xxxxx        | true                  |
+    | mode   | 个人文件夹还是共享文件夹 | "person" or"share" | false(default person) |
    
 
 
