@@ -19,6 +19,8 @@ done_list = []
 mode = 'person'
 # api 前缀
 api_pre = None
+# 识别成功列表
+detect_list = []
 
 
 def get_tags():
@@ -58,10 +60,29 @@ def start_indexing():
     global offset
     has_more = True
     while (has_more):
-        has_more = get_photos()
+        list = get_photos()
+        has_more = list is not None and len(list) > 0
         if not has_more:
             break
+        detect_photo_list(list)
         offset += limit
+    logger.info(f'识别到猫 %d 张图片, 共识别 %d 张图片', len(detect_list), len(done_list))
+
+
+def detect_photo_list(list):
+    for p in list:
+        id = p['id']
+        if has_done(id):
+            continue
+        thumbnail = p['additional']['thumbnail']
+        cache_key = thumbnail['cache_key']
+        image_content = get_photo_by_id(id, cache_key, headers)
+        is_detect = detect_image(image_content)
+        logger.debug(f'{id} {cache_key} {is_detect}')
+        if is_detect:
+            bind_tag(id, tag_name='猫')
+            detect_list.append(p)
+    add_to_done_list(list)
 
 
 def get_photos():
@@ -79,29 +100,17 @@ def get_photos():
         #     'start_time':,
         # 'end_time':
     }
-    print(headers)
+    # logger.info(headers)
     response = requests.post(url, data=data, headers=headers)
     data = json.loads(response.content)
-    # print(data)
+    # logger.info(data)
     if data['success']:
         list = data['data']['list']
         logger.info(f'get_photos: {len(list)}')
-        for p in list:
-            id = p['id']
-            if has_done(id):
-                continue
-            thumbnail = p['additional']['thumbnail']
-            cache_key = thumbnail['cache_key']
-            image_content = get_photo_by_id(id, cache_key, headers)
-            is_detect = detect_image(image_content)
-            logger.debug(f'{id} {cache_key} {is_detect}')
-            if is_detect:
-                bind_tag(id, tag_name='猫')
-        add_to_done_list(list)
-        return True
+        return list
     else:
         logger.info(response.content)
-        return False
+        return None
 
 
 def detect_image(image_content):
@@ -113,9 +122,9 @@ def detect_image(image_content):
 
 
 def get_photo_by_id(id, cache_key, headers):
-    # print(f'{id}  {cache_key}')
+    # logger.info(f'{id}  {cache_key}')
     url = f'{base_url}/webapi/entry.cgi?id={id}&cache_key={cache_key}&type=unit&size=sm&api={api_pre}.Thumbnail&method=get&version=2&SynoToken=NXibb.RkEVsCY'
-    # print(url)
+    # logger.info(url)
     headers[
         'Accept'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
     headers['Accept-Encoding'] = 'gzip, deflate'
@@ -123,7 +132,7 @@ def get_photo_by_id(id, cache_key, headers):
     if response.status_code == 200:
         return response.content
     else:
-        print(response.content)
+        logger.info(response.content)
     return False
 
 
@@ -138,10 +147,10 @@ def create_tag(tag_name):
     response = requests.post(url, data, headers=headers)
     data = json.loads(response.content)
     if data['success']:
-        print('标签添加成功')
+        logger.info('标签添加成功')
         tags.append(data['data']['tag'])
     else:
-        print('标签添加失败')
+        logger.info('标签添加失败')
 
 
 def bind_tag(id, tag_name):
@@ -159,14 +168,14 @@ def bind_tag(id, tag_name):
         'id': f'[{id}]',
         'tag': f'[{tag_id}]'
     }
-    # print(data)
+    # logger.info(data)
     response = requests.post(url, data, headers=headers)
     data = json.loads(response.content)
     if data['success']:
-        print('绑定标签成功')
+        logger.info('绑定标签成功')
         return True
     else:
-        print('添加标签失败')
+        logger.info('添加标签失败')
         return False
 
 
@@ -187,7 +196,7 @@ def read_done_list():
         done_list = data
     except FileNotFoundError:
         os.mknod(done_list_file)
-        print("文件创建成功！")
+        logger.info("文件创建成功！")
     except Exception as e:
         logger.error(e)
 
@@ -220,7 +229,7 @@ def init_var():
     global api_pre
     cookie = os.environ['cookie']
     token = os.environ['token']
-    mode = os.environ.get('mode','person')
+    mode = os.environ.get('mode', 'person')
     headers = {
         'Cookie': cookie,
         'X-SYNO-TOKEN': token,
@@ -237,7 +246,7 @@ def start():
     read_done_list()
     global tags
     tags = get_tags()
-    print(tags)
+    logger.info(tags)
     start_indexing()
 
 
