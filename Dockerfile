@@ -13,13 +13,11 @@ RUN pip install --upgrade pip \
     && pip install -r yolov5/requirements.txt \
     && pip install torch==1.13.0 torchvision==0.14.0 \
     && apt-get update \
-    && apt-get install -y libgl1-mesa-glx \
+    && apt-get install ffmpeg libsm6 libxext6 -y \
+#    && apt-get install -y libgl1-mesa-glx \
     # 删除缓存文件
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf ~/.cache/pip
-#    && apt-get install ffmpeg libsm6 libxext6 -y
-#    && apt-get install libgl1-mesa-glx -y
-
 
 # 设置环境变量
 ENV PYTHONPATH "${PYTHONPATH}:/app/"
