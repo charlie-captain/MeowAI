@@ -22,6 +22,27 @@ mode = 'person'
 api_pre = None
 # 识别成功列表
 detect_list = []
+username = None
+pwd = None
+token_error_code = ['119', '120', '150']
+
+
+def get_token():
+    global cookie
+    global token
+    global headers
+    url = f'{base_url}/photo/webapi/auth.cgi?api=SYNO.API.Auth&version=3&method=login&account={username}&passwd={pwd}&enable_syno_token=yes'
+    response = requests.get(url)
+    data = json.loads(response.content)
+    if data['success']:
+        cookie = response.headers.get('Set-Cookie')
+        token = data['data']['synotoken']
+        headers = {
+            'Cookie': cookie,
+            'X-SYNO-TOKEN': token,
+        }
+    else:
+        logger.error(response.content)
 
 
 def get_tags():
@@ -39,6 +60,8 @@ def get_tags():
         list = data['data']['list']
         return list
     else:
+        if data['error']['code'] in token_error_code:
+            get_token()
         logger.info(response.content)
     return []
 
@@ -109,6 +132,8 @@ def get_photos():
         logger.info(f'get_photos: {len(list)}')
         return list
     else:
+        if data['error']['code'] in token_error_code:
+            get_token()
         logger.info(response.content)
         return None
 
@@ -150,6 +175,8 @@ def create_tag(tag_name):
         logger.info('标签添加成功')
         tags.append(data['data']['tag'])
     else:
+        if data['error']['code'] in token_error_code:
+            get_token()
         logger.info('标签添加失败')
 
 
@@ -175,6 +202,8 @@ def bind_tag(id, tag_name):
         logger.info('绑定标签成功')
         return True
     else:
+        if data['error']['code'] in token_error_code:
+            get_token()
         logger.info('添加标签失败')
         return False
 
@@ -222,21 +251,13 @@ def add_to_done_list(list):
 
 
 def init_var():
-    global cookie
-    global token
-    global headers
     global mode
     global api_pre
-    cookie = os.environ['cookie']
-    token = os.environ['token']
+    global username
+    global pwd
+    username = os.environ['user']
+    pwd = os.environ['pwd']
     mode = os.environ.get('mode', 'person')
-    print(cookie)
-    print(token)
-    headers = {
-        'Cookie': cookie,
-        'X-SYNO-TOKEN': token,
-    }
-    print(headers)
     if mode == 'person':
         api_pre = 'SYNO.Foto'
     else:
@@ -246,6 +267,7 @@ def init_var():
 def start():
     init_var()
     read_done_list()
+    get_token()
     global tags
     tags = get_tags()
     logger.info(tags)
