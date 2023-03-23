@@ -1,12 +1,12 @@
 import json
 import os
-import socket
 
 import requests
+from tqdm import tqdm
 
 from src.detect.detect import detect
-from src.log.logger import logger
 from src.log import logger as log
+from src.log.logger import logger
 
 base_url = 'http://127.0.0.1:5000'
 cookie = None
@@ -33,16 +33,19 @@ def get_token():
     global headers
     url = f'{base_url}/photo/webapi/auth.cgi?api=SYNO.API.Auth&version=3&method=login&account={username}&passwd={pwd}&enable_syno_token=yes'
     response = requests.get(url)
-    data = json.loads(response.content)
-    if data['success']:
-        cookie = response.headers.get('Set-Cookie')
-        token = data['data']['synotoken']
-        headers = {
-            'Cookie': cookie,
-            'X-SYNO-TOKEN': token,
-        }
-    else:
-        logger.error(response.content)
+    try:
+        data = json.loads(response.content)
+        if data['success']:
+            cookie = response.headers.get('Set-Cookie')
+            token = data['data']['synotoken']
+            headers = {
+                'Cookie': cookie,
+                'X-SYNO-TOKEN': token,
+            }
+        else:
+            logger.error(response.content)
+    except Exception as e:
+        logger.error(e)
 
 
 def get_tags():
@@ -90,11 +93,12 @@ def start_indexing():
             break
         detect_photo_list(list)
         offset += limit
-    logger.info(f'识别到猫 %d 张图片, 共识别 %d 张图片', len(detect_list), len(done_list))
+        logger.info(f'识别到猫 %d 张图片, 共识别 %d 张图片', len(detect_list), len(done_list))
 
 
 def detect_photo_list(list):
-    for p in list:
+    for i, p in enumerate(tqdm(list)):
+        logger.info(f"\r{i + 1}/{len(list)}")
         id = p['id']
         if has_done(id):
             continue
@@ -123,7 +127,7 @@ def get_photos():
         #     'start_time':,
         # 'end_time':
     }
-    logger.info(headers)
+    # logger.info(headers)
     response = requests.post(url, data=data, headers=headers)
     data = json.loads(response.content)
     # logger.info(data)
@@ -134,7 +138,7 @@ def get_photos():
     else:
         if data['error']['code'] in token_error_code:
             get_token()
-        logger.info(response.content)
+        logger.error(response.content)
         return None
 
 
