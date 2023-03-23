@@ -87,7 +87,6 @@ def detect_photo_list(list):
 
 
 def get_photos():
-    global url, data
     logger.info(f'current offset = {offset} limit = {limit}')
     url = f'{base_url}/webapi/entry.cgi/{api_pre}.Browse.Item'
     data = {
@@ -231,11 +230,14 @@ def init_var():
     cookie = os.environ['cookie']
     token = os.environ['token']
     mode = os.environ.get('mode', 'person')
+    print(cookie)
+    print(token)
     headers = {
         'Cookie': cookie,
         'X-SYNO-TOKEN': token,
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36',
     }
+    print(headers)
     if mode == 'person':
         api_pre = 'SYNO.Foto'
     else:
