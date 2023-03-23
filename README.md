@@ -24,12 +24,15 @@ Making image smaller now, will be updated.
 4. run docker container
 
     ```shell
-    docker run -it --name meowai --env cookie="xxx" --env token="xxx" --network host meowai_image
+    docker run -it --name meowai -e cookie="xxx" -e token="xxx" -e mode="person" --network host meowai_image
     ```
 
-   cookie-> Cookie: __SSID...
-
-   token-> X-SYNO-TOKEN: xxxxx
+    | Argument | Description              | Demo               | Require        |
+    | -------- | ------------------------ | ------------------ | -------------- |
+    | cookie   | Dsm request headerCookie | __SSID...          | true           |
+    | token    | X-SYNO-TOKEN:            | Nxxxx.xxxxxÏ       | true           |
+    | mode     | person dir or share dir  | "person" or"share" | default person |
+   
 
 ## Dev
 
