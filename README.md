@@ -27,10 +27,10 @@ Making image smaller now, will be updated.
     docker run -it --name meowai -e cookie="xxx" -e token="xxx" -e mode="person" --network host meowai_image
     ```
 
-    | Argument | Description              | Demo               | Require        |
-    | -------- | ------------------------ | ------------------ | -------------- |
-    | cookie   | Dsm request headerCookie | __SSID...          | true           |
-    | token    | X-SYNO-TOKEN:            | Nxxxx.xxxxxÏ       | true           |
+    | Argument | Description              | Demo              | Require        |
+    | -------- | ----------------------- | ------------------ | -------------- |
+    | cookie   | Dsm request headerCookie | __SSID...         | true           |
+    | token    | X-SYNO-TOKEN:            | Nxxxx.xxxxx       | true           |
     | mode     | person dir or share dir  | "person" or"share" | default person |
    
 
