@@ -1,18 +1,26 @@
+import json
 import os
 
 import requests
 
 
 def main():
-    base_url='http://127.0.0.1:5000'
+    url = ''
+    response = requests.get(url)
+    print(response.content)
+    print(response.headers)
+    base_url = 'http://127.0.0.1:5000'
     api_pre = 'SYNO.FotoTeam'
-    cookie = os.environ['cookie']
-    token = os.environ['token']
+    # cookie = os.environ['cookie']
+    # token = os.environ['token']
+    data = json.loads(response.content)
+    cookie = response.headers.get('Set-Cookie')
+    token = data['data']['synotoken']
     headers = {
         'Cookie': cookie,
-        'X-SYNO-TOKEN':token ,
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36',
+        'X-SYNO-TOKEN': token,
     }
+    print(headers)
     url = f'{base_url}/webapi/entry.cgi/SYNO.FotoTeam.Browse.GeneralTag'
     data = {
         'api': f'SYNO.FotoTeam.Browse.GeneralTag',
