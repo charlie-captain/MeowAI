@@ -2,22 +2,37 @@
 
 使用Yolov5检测猫并在Synology Photos上对图片添加标签
 
+## 原理
+
+通过Synology API获取图片缩略图，使用离线yolov5模型识别并对图片添加标签
+
+
+
 ## 使用方法
 
 ### Synology DSM
 
-目前还在精简镜像体积，请先使用下面方法
+1. 下载镜像, 一般选latest(x86-64)
+    ![picture 1](images/1679625127031.png)  
+    
+2. 启动容器
+    ![picture 2](images/1679625615970.png)  
+
+    ![picture 3](images/1679625687135.png)  
+
 
 ### Docker
 
-1. 安装Docker
-2. 克隆项目
-3. 构建Docker镜像
-    ```shell
-    chmod 777 ./build.sh
-    ./build.sh
+1. 拉取镜像
     ```
-   运行Docker容器
+    //arm64 [600MB]
+    docker pull charliecaptain/meowai-image:latest-arm-linux
+
+    //x86-64 [2G]
+    docker pull charliecaptain/meowai-image:latest
+    ```
+
+2. 运行Docker容器
 
    ```shell
     docker run -it --name meowai -e user="xxx" -e pwd="xxx" --network host meowai_image
@@ -32,8 +47,20 @@
    
 
 
-## Dev
+## 开发
 
 目前使用的是Yolov5s.pt数据模型，可以更换更大的数据模型，更多详情请看[Yolov5-Github](https://github.com/ultralytics/yolov5).
 
+### 构建Docker镜像
+1. 安装Docker
+2. 克隆项目
+3. 构建Docker镜像
+    ```shell
+    chmod 777 ./build.sh
+    ./build.sh
+    ```
 
+
+## Thanks
+
+https://github.com/zeichensatz/SynologyPhotosAPI

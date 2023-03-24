@@ -98,7 +98,7 @@ def start_indexing():
 
 def detect_photo_list(list):
     for i, p in enumerate(tqdm(list)):
-        logger.info(f"\r{i + 1}/{len(list)}")
+        logger.debug(f"{i + 1}/{len(list)}")
         id = p['id']
         if has_done(id):
             continue
