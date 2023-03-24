@@ -4,6 +4,7 @@ import os
 import requests
 from tqdm import tqdm
 
+from src.detect import detect_dict
 from src.detect.detect import detect
 from src.log import logger as log
 from src.log.logger import logger
@@ -24,6 +25,7 @@ api_pre = None
 detect_list = []
 username = None
 pwd = None
+# token错误码
 token_error_code = ['119', '120', '150']
 
 
@@ -68,21 +70,6 @@ def get_tags():
         logger.info(response.content)
     return []
 
-
-def get_time_line():
-    url = f'{base_url}/webapi/entry.cgi/{api_pre}.Browse.Timeline'
-    data = {
-        'api': f'{api_pre}.Browse.Timeline',
-        'method': 'get',
-        'version': '2',
-        'timeline_group_unit': 'day'
-    }
-    response = requests.post(url, data, headers=headers)
-    data = json.loads(response.content)
-    if data['success']:
-        section_list = data['data']['section']
-
-
 def start_indexing():
     global offset
     has_more = True
@@ -105,10 +92,10 @@ def detect_photo_list(list):
         thumbnail = p['additional']['thumbnail']
         cache_key = thumbnail['cache_key']
         image_content = get_photo_by_id(id, cache_key, headers)
-        is_detect = detect_image(image_content)
-        logger.debug(f'{id} {cache_key} {is_detect}')
-        if is_detect:
-            bind_tag(id, tag_name='猫')
+        detect_tag = detect(image_content)
+        logger.debug(f'{id} {cache_key} {detect_tag}')
+        if detect_tag is not None:
+            bind_tag(id, tag_name=detect_tag)
             detect_list.append(p)
     add_to_done_list(list)
 
@@ -140,14 +127,6 @@ def get_photos():
             get_token()
         logger.error(response.content)
         return None
-
-
-def detect_image(image_content):
-    is_cat = detect(image_content)
-    if is_cat:
-        return True
-    else:
-        return False
 
 
 def get_photo_by_id(id, cache_key, headers):
@@ -269,6 +248,7 @@ def init_var():
     else:
         api_pre = 'SYNO.FotoTeam'
     base_url = f'http://{ip}'
+    detect_dict.init_model_var()
 
 
 def start():

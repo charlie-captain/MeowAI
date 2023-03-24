@@ -1,6 +1,8 @@
 # MeowAI
 
-Detect cat and tag image on synology photos by yolov5
+Detect cat and tag image on synology photos by yolov5, also supports recognition of other 67 scenes
+
+
 
 [中文文档](./README-CN.md)
 
@@ -32,16 +34,24 @@ Detect cat and tag image on synology photos by yolov5
 2. run docker container
 
     ```shell
-    docker run -it --name meowai -e user="xxx" -e pwd="xxx" -e mode="person" --network host meowai_image
+    docker run -it 
+            --name meowai 
+            -e user="xxx" 
+            -e pwd="xxx" 
+            -e mode="person" 
+            -e detect_class="[\"cat\",\"dog\"]"
+            --network host 
+            meowai_image
     ```
 
-    | Argument | Description             | Demo               | Require                       |
-    | -------- | ----------------------- | ------------------ | ----------------------------- |
-    | user     | login user              | -                  | true                          |
-    | pwd      | login password          | -                  | true                          |
-    | ip       | nas ip                  | 0.0.0.0:5000       | false(default 127.0.0.1:5000) |
-    | mode     | person dir or share dir | "person" or"share" | false(default person)         |
-   
+    | Argument     | Description                                  | Demo                | Require                       |
+    | ------------ | -------------------------------------------- | ------------------- | ----------------------------- |
+    | user         | login user                                   | -                   | true                          |
+    | pwd          | login password                               | -                   | true                          |
+    | ip           | nas ip                                       | 0.0.0.0:5000        | false(default 127.0.0.1:5000) |
+    | mode         | person dir or share dir                      | "person" or"share"  | false(default person)         |
+    | detect_class | detect scenes, see src/detect/detect_dict.py | ['cat','dog','all'] | false(default ['cat'])        |
+    
 
 ## Dev
 

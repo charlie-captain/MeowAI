@@ -1,6 +1,6 @@
 # MeowAI
 
-使用Yolov5检测猫并在Synology Photos上对图片添加标签
+使用Yolov5检测猫并在Synology Photos上对图片添加标签，也支持识别其他67种场景
 
 ## 原理
 
@@ -38,13 +38,14 @@
     docker run -it --name meowai -e user="xxx" -e pwd="xxx" --network host meowai_image
     ```
 
-    | 参数 | 说明                     | 例子               | 必选                          |
-    | ---- | ------------------------ | ------------------ | ----------------------------- |
-    | user | 登录用户名               | -                  | true                          |
-    | pwd  | 登录密码                 | -                  | true                          |
-    | ip   | Nas的地址:端口ƒ          | 0.0.0.0:5000       | false(default 127.0.0.1:5000) |
-    | mode | 个人文件夹还是共享文件夹 | "person" or"share" | false(default person)         |
-   
+    | 参数         | 说明                                              | 例子                | 必选                          |
+    | ------------ | ------------------------------------------------- | ------------------- | ----------------------------- |
+    | user         | 登录用户名                                        | -                   | true                          |
+    | pwd          | 登录密码                                          | -                   | true                          |
+    | ip           | Nas的地址:端口                                    | 0.0.0.0:5000        | false(default 127.0.0.1:5000) |
+    | mode         | 个人文件夹还是共享文件夹                          | "person" or"share"  | false(default person)         |
+    | detect_class | 识别的场景(67种), 具体看src/detect/detect_dict.py | ['cat','dog','all'] | false(default ['cat'])        |
+    
 
 
 ## 开发
