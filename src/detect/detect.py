@@ -6,6 +6,7 @@ from io import BytesIO
 import torch
 from PIL import Image
 
+from src.detect import detect_dict
 from src.log.logger import logger
 
 
@@ -45,22 +46,22 @@ def detect(image_path):
         labels = results.xyxy[0][:, 5].numpy()
         if len(labels) == 0:
             # logger.info('没有识别到任何物体')
-            return False
-        lable_index = labels[0]
-        label_text = model.names[lable_index]
+            return None
+        label_index = labels[0]
+        label_text = model.names[label_index]
         # logger.info(label_text)
         # print(scores)
-        if label_text == 'cat':
-            logger.info('识别为猫')
+        if detect_dict.has_label(label_text):
+            logger.info(f'识别为 {label_text}')
             end_time = time.time()
             elapsed_time = round(end_time - start_time, 2)
             logger.info(f"方法执行时间为：{elapsed_time} 秒")
-            return True
+            return detect_dict.get_tag_by_label(label_text)
         else:
-            return False
+            return None
     except Exception as e:
         logger.exception("Error: %s", e)
-        return False
+        return None
 
 
 def detect_dir():
@@ -73,13 +74,13 @@ def detect_dir():
             if filename.endswith(".png") or filename.endswith(".jpg") or filename.endswith(".jpeg"):
                 # 文件名列表，包含完整路径
                 file = os.path.join(home, filename)
-                is_cat = detect(file)
-                if is_cat:
-                    file_name = os.path.basename(file)
-                    new_file_path = './results/' + file_name
-                    # shutil.copy2(file, new_file_path)
-                    detect_file = DetectFile(file_name, file_path=file)
-                    detect_file_list.append(detect_file)
+                # is_cat = detect(file)
+                # if is_cat:
+                #     file_name = os.path.basename(file)
+                #     new_file_path = './results/' + file_name
+                #     shutil.copy2(file, new_file_path)
+                    # detect_file = DetectFile(file_name, file_path=file)
+                    # detect_file_list.append(detect_file)
     json_str = json.dumps([f.__dict__ for f in detect_file_list])
     with open("./results/result.json", "w") as f:
         json.dump(json_str, f)
