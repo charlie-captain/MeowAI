@@ -1,6 +1,6 @@
 # MeowAI
 
-Detect cat and tag image on synology photos by yolov5, also supports recognition of other 67 scenes
+Detect cat and tag image on synology photos by yolov5, also supports recognition of other 80 scenes
 
 [中文文档](./README-CN.md)
 
@@ -103,6 +103,8 @@ https://github.com/zeichensatz/SynologyPhotosAPI
 ## Donate
 
 TRC20(USDT): TKRJkxUWYnnjLXVjN5Nutk6cvZ3Nz3S9pv
+
+<img src="images/1679625687777.JPG" width="50%" />
 
 ## License
 
