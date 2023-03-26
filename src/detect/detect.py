@@ -9,23 +9,19 @@ from PIL import Image
 from src.detect import detect_dict
 from src.log.logger import logger
 
-
-class DetectFile:
-
-    def __init__(self, file_name, file_path):
-        self.file_name = file_name
-        self.file_path = file_path
-
-
 model = None
+model_name = 'yolov5l'
 
 
 def init_model():
     global model
+    global model_name
     start_time = time.time()
-    logger.info('加载模型...')
+    model_name = os.environ.get('model', model_name)
+    logger.info(f'加载模型: {model_name}')
     try:
-        model = torch.hub.load('./yolov5', 'custom', source='local', path='./yolov5s.pt')
+        model_file = f'./{model_name}.pt'
+        model = torch.hub.load('./yolov5', 'custom', source='local', path=model_file)
     except Exception as e:
         logger.error(e)
         exit(-1)
@@ -52,10 +48,9 @@ def detect(image_path):
         # logger.info(label_text)
         # print(scores)
         if detect_dict.has_label(label_text):
-            logger.info(f'识别为 {label_text}')
             end_time = time.time()
             elapsed_time = round(end_time - start_time, 2)
-            logger.info(f"方法执行时间为：{elapsed_time} 秒")
+            # logger.debug(f"方法执行时间为：{elapsed_time} 秒")
             return detect_dict.get_tag_by_label(label_text)
         else:
             return None
@@ -79,8 +74,8 @@ def detect_dir():
                 #     file_name = os.path.basename(file)
                 #     new_file_path = './results/' + file_name
                 #     shutil.copy2(file, new_file_path)
-                    # detect_file = DetectFile(file_name, file_path=file)
-                    # detect_file_list.append(detect_file)
+                # detect_file = DetectFile(file_name, file_path=file)
+                # detect_file_list.append(detect_file)
     json_str = json.dumps([f.__dict__ for f in detect_file_list])
     with open("./results/result.json", "w") as f:
         json.dump(json_str, f)
