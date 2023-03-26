@@ -120,6 +120,7 @@ def detect_photo_list(list):
         if detect_tag is not None:
             bind_tag(id, tag_name=detect_tag)
             detect_file.tag = detect_tag
+            detect_list.append(p)
         done_list.append(detect_file)
     add_to_done_list(done_list)
 
