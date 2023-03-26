@@ -1,6 +1,6 @@
 # MeowAI
 
-使用Yolov5检测猫并在Synology Photos上对图片添加标签，也支持识别其他67种场景
+使用Yolov5离线检测图片并在Synology Photos上对图片添加标签，支持识别80种场景
 
 ## 原理
 
@@ -87,11 +87,13 @@ test on mac m1: yolov5s(0.2s), yolov5m(0.3s), yolov5l(0.4s)
 
 https://github.com/zeichensatz/SynologyPhotosAPI
 
-## Donate
+## 捐献
+
+>感谢您的支持
 
 TRC20(USDT): TKRJkxUWYnnjLXVjN5Nutk6cvZ3Nz3S9pv
 
-<img src="images/1679625687777.JPG.JPG" width="60%" />
+<img src="images/1679625687777.JPG" width="50%" />
 
 ## License
 
