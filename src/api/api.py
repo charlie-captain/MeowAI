@@ -1,11 +1,11 @@
 import json
 import os
+import time
 
 import requests
-from tqdm import tqdm
 
 from src.detect import detect_dict
-from src.detect.detect import detect
+from src.detect import detect
 from src.log import logger as log
 from src.log.logger import logger
 
@@ -15,7 +15,7 @@ token = None
 headers = None
 tags = []
 offset = 0
-limit = 1000
+limit = 100
 done_list = []
 # 识别文件夹
 mode = 'person'
@@ -27,6 +27,23 @@ username = None
 pwd = None
 # token错误码
 token_error_code = ['119', '120', '150']
+
+
+class DetectFile:
+
+    def __init__(self, id, filename, type, tag, model):
+        self.id = id
+        self.filename = filename
+        self.type = type
+        self.tag = tag
+        self.model = model
+
+
+class DetectFileEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, DetectFile):
+            return {"id": obj.id, "filename": obj.filename, "type": obj.type, "tag": obj.tag, "model": obj.model}
+        return super().default(obj)
 
 
 def get_token():
@@ -70,6 +87,7 @@ def get_tags():
         logger.info(response.content)
     return []
 
+
 def start_indexing():
     global offset
     has_more = True
@@ -80,24 +98,30 @@ def start_indexing():
             break
         detect_photo_list(list)
         offset += limit
-        logger.info(f'识别到猫 %d 张图片, 共识别 %d 张图片', len(detect_list), len(done_list))
+        logger.info(f'成功识别到 %d 张图片, 共处理 %d 张图片', len(detect_list), len(done_list))
 
 
 def detect_photo_list(list):
-    for i, p in enumerate(tqdm(list)):
-        logger.debug(f"{i + 1}/{len(list)}")
+    done_list = []
+    for i, p in enumerate(list):
         id = p['id']
         if has_done(id):
             continue
+        start_time = time.time()
         thumbnail = p['additional']['thumbnail']
         cache_key = thumbnail['cache_key']
         image_content = get_photo_by_id(id, cache_key, headers)
-        detect_tag = detect(image_content)
+        detect_tag = detect.detect(image_content)
+        end_time = time.time()
+        elapsed_time = round(end_time - start_time, 2)
+        logger.info(f'进度: {i + 1}/{len(list)}, {p["filename"]} 识别为 {detect_tag}, 耗时为 {elapsed_time} 秒')
         logger.debug(f'{id} {cache_key} {detect_tag}')
+        detect_file = DetectFile(id, filename=p['filename'], type=p['type'], tag=None, model=detect.model_name)
         if detect_tag is not None:
             bind_tag(id, tag_name=detect_tag)
-            detect_list.append(p)
-    add_to_done_list(list)
+            detect_file.tag = detect_tag
+        done_list.append(detect_file)
+    add_to_done_list(done_list)
 
 
 def get_photos():
@@ -155,12 +179,12 @@ def create_tag(tag_name):
     response = requests.post(url, data, headers=headers)
     data = json.loads(response.content)
     if data['success']:
-        logger.info('标签添加成功')
+        logger.info(f'标签创建成功: {tag_name}')
         tags.append(data['data']['tag'])
     else:
         if data['error']['code'] in token_error_code:
             get_token()
-        logger.info('标签添加失败')
+        logger.info(f'标签创建失败: {tag_name}')
 
 
 def bind_tag(id, tag_name):
@@ -180,15 +204,19 @@ def bind_tag(id, tag_name):
     }
     # logger.info(data)
     response = requests.post(url, data, headers=headers)
-    data = json.loads(response.content)
-    if data['success']:
-        logger.info('绑定标签成功')
-        return True
-    else:
-        if data['error']['code'] in token_error_code:
-            get_token()
-        logger.info('添加标签失败')
-        return False
+    try:
+        data = json.loads(response.content)
+        if data['success']:
+            logger.debug(f'标签绑定成功: id={id} {tag_name}')
+            return True
+        else:
+            if data['error']['code'] in token_error_code:
+                get_token()
+            logger.error(f'标签绑定失败: id={id} {tag_name}')
+            return False
+    except Exception as e:
+        logger.error(e)
+        logger.error(f'标签绑定失败: id={id} {tag_name}')
 
 
 def get_tag_id_by_name(tag_name):
@@ -203,7 +231,7 @@ def read_done_list():
         logger.info('读取已完成列表')
         done_list_file = get_done_list_file_path()
         with open(done_list_file, 'r') as f:
-            data = json.load(f)
+            data = json.load(f, cls=DetectFileEncoder)
         global done_list
         done_list = data
     except FileNotFoundError:
@@ -221,7 +249,7 @@ def get_done_list_file_path():
 
 def has_done(id):
     for d in done_list:
-        if d['id'] == id:
+        if d.id == id and d.tag is not None:
             return True
     return False
 
@@ -230,7 +258,7 @@ def add_to_done_list(list):
     for done in list:
         done_list.append(done)
     with open(get_done_list_file_path(), 'w') as f:
-        json.dump(done_list, f)
+        json.dump([obj.__dict__ for obj in done_list], f)
 
 
 def init_var():
