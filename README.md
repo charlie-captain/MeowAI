@@ -1,6 +1,6 @@
 # MeowAI
 
-Detect cat and tag image on synology photos by yolov5, also supports recognition of other 80 scenes
+Use Yolov5 to perform offline detection on images and add tags to the images in Synology Photos, supporting the recognition of 80 scenes.
 
 [中文文档](./README-CN.md)
 
