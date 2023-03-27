@@ -76,12 +76,13 @@ def detect_photo_list(list):
         detect_tag, score = detect.detect(image_content)
         end_time = time.time()
         elapsed_time = round(end_time - start_time, 2)
-        logger.info(f'进度: {i + 1}/{len(list)}, {p["filename"]} 识别为 {detect_tag}, 耗时为 {elapsed_time} 秒')
+        logger.info(
+            f'进度: {i + 1}/{len(list)}, {p["filename"]} 识别为 {detect_tag}, 准确度为 {round(score, 2)} 耗时为 {elapsed_time} 秒')
         logger.debug(f'{id} {cache_key} {detect_tag}')
         detect_file = DetectFile(id, filename=p['filename'], type=p['type'], tag=None, model=detect.model_name,
                                  score=score)
         if detect_tag is not None:
-            if score >= 0.5:
+            if score >= 0.7:
                 # 可信度阈值过滤
                 exist_tags = p['additional']['tag']
                 bind_tag(id, tag_name=detect_tag, exist_tags=exist_tags)
