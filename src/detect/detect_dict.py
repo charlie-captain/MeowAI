@@ -91,21 +91,25 @@ def init_model_var():
     global is_detect_all
     cur_config = config.curConfig
     logger.info(cur_config)
-    detect_class = cur_config.detect_class
-    for c in detect_class:
-        if c == 'all':
-            is_detect_all = True
-            break
-    logger.info(f'需要识别类型为: {detect_class}')
+    exclude_class = cur_config.exclude_class
+    is_detect_all = len(exclude_class) == 0
+
+    logger.info(f'排除的场景为: {exclude_class}')
 
 
 def has_label(label):
     if is_detect_all:
         return is_label_in_dict(label)
     else:
-        for d in config.curConfig.detect_class:
+        is_exclude = False
+        for d in config.curConfig.exclude_class:
             if d == label:
-                return is_label_in_dict(d)
+                is_exclude = True
+                break
+        if is_exclude:
+            return False
+        else:
+            return is_label_in_dict(label)
 
 
 def is_label_in_dict(key):

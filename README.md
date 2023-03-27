@@ -24,7 +24,7 @@ Extract thumbnail images using Synology API and add labels to images using offli
     user="xxx" \
     pwd="xxx" \
     mode="xxx" \
-    detect_class="[\"cat\",\"all\"]" \
+    exclude_class="[\"cat\"]" \
     ip="192.168.5.1:5000" \
     python3 main.py
     ```
@@ -48,7 +48,7 @@ Extract thumbnail images using Synology API and add labels to images using offli
             -e user="xxx" 
             -e pwd="xxx" 
             -e mode="person" 
-            -e detect_class="[\"cat\",\"dog\"]"
+            -e exclude_class="[\"cat\",\"dog\"]"
             --network host 
             meowai_image
     ```
@@ -71,14 +71,14 @@ This will consume your CPU resources.
 
 ### Arguments
 
-| Argument     | Description                                  | Demo               | Require                       |
-| ------------ | -------------------------------------------- | ------------------ | ----------------------------- |
-| user         | login user                                   | -                  | true                          |
-| pwd          | login password                               | -                  | true                          |
-| ip           | nas ip                                       | 0.0.0.0:5000       | false(default 127.0.0.1:5000) |
-| mode         | person dir or share dir                      | "person" or"share" | false(default person)         |
-| detect_class | detect scenes, see src/detect/detect_dict.py | ['cat','dog']      | false(default ['all'])        |
-| model        | yolov5 model pt file name                    | yolov5m6            | false(default yolov5m6)        |
+| Argument     | Description                                          | Demo               | Require                       |
+|--------------|------------------------------------------------------| ------------------ |-------------------------------|
+| user         | login user                                           | -                  | true                          |
+| pwd          | login password                                       | -                  | true                          |
+| ip           | nas ip                                               | 0.0.0.0:5000       | false(default 127.0.0.1:5000) |
+| mode         | person dir or share dir                              | "person" or"share" | false(default person)         |
+| exclude_class | exclude detect scenes, see src/detect/detect_dict.py | ['cat','dog']      | false(default [])            |
+| model        | yolov5 model pt file name                            | yolov5m6            | false(default yolov5m6)       |
 
 
 ## Dev
@@ -101,7 +101,7 @@ website [Yolov5-Github](https://github.com/ultralytics/yolov5).
 
 ### How to remove all tags
 ```shell
-user="xxx" pwd="xxx" mode="xxx" detect_class="[\"all\"]" python3 src/util/util.py
+user="xxx" pwd="xxx" mode="xxx" exclude_class="[\"dog\"]" python3 src/util/util.py
 ```
 
 ## Thanks
