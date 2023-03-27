@@ -43,7 +43,8 @@ def init_config():
     print(f'当前环境: {"Debug环境" if is_debug else "正式环境"}')
     curConfig = Config()
     detect_class = os.environ.get('detect_class', None)
-    detect_class = json.loads(detect_class)
+    if detect_class:
+        detect_class = json.loads(detect_class)
     if detect_class and detect_class != curConfig.detect_class:
         curConfig.detect_class = detect_class
         curConfig.save_cur_config()
