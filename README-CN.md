@@ -13,15 +13,20 @@
 1. git clone repository
 2. install requirements.txt
     ```
-   pip3 install requirements.txt
-   pip3 install yolov5/requirements.txt
+   pip3 install -r requirements.txt
+   pip3 install -r yolov5/requirements.txt
    pip3 install torch torchvision
    ```
 3. run py
    ```
-    user="xxx" pwd="xxx" mode="xxx" detect_class="[\"cat\",\"all\"]" python3 main.py
-    ```
+    user="xxx" \
+    pwd="xxx" \
+    mode="xxx" \
+    detect_class="[\"cat\",\"all\"]" \
+    ip="192.168.5.1:5000" \
 
+    python3 main.py
+    ```
 
 ### Docker 
 
@@ -61,7 +66,7 @@
 | pwd          | 登录密码                                          | -                   | true                          |
 | ip           | Nas的地址:端口                                    | 0.0.0.0:5000        | false(default 127.0.0.1:5000) |
 | mode         | 个人文件夹还是共享文件夹                          | "person" or"share"  | false(default person)         |
-| detect_class | 识别的场景(67种), 具体看src/detect/detect_dict.py | ['cat','dog','all'] | false(default ['all'])        |
+| detect_class | 识别的场景(80种), 具体看src/detect/detect_dict.py | ['cat','dog','all'] | false(default ['all'])        |
 | model        | 模型数据集                                        | yolov5m6             | false(default yolov5m6)        |
 
 ## 开发

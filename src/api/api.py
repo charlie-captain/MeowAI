@@ -189,14 +189,19 @@ def remove_tags(id, tag_ids):
         'tag': f'{tag_ids}'
     }
     response = requests.post(url, data, headers=headers)
-    data = response.json()
-    if data['success']:
-        logger.debug(f'标签移除成功: id={id} {tag_ids}')
-        return True
-    else:
-        if data['error']['code'] in token_error_code:
-            get_token()
+    try:
+        data = response.json()
+        if data['success']:
+            logger.debug(f'标签移除成功: id={id} {tag_ids}')
+            return True
+        else:
+            if data['error']['code'] in token_error_code:
+                get_token()
+            logger.error(f'标签移除失败: id={id} {tag_ids}')
+            return False
+    except Exception as e:
         logger.error(f'标签移除失败: id={id} {tag_ids}')
+        logger.error(e)
         return False
 
 

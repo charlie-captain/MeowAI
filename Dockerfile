@@ -8,16 +8,26 @@ COPY . /app
 WORKDIR /app
 
 # 安装所需依赖
-RUN apt-get update --fix-missing \
-    && apt-get install ffmpeg libsm6 libxext6 -y \
-    && pip install --upgrade pip \
-    && pip install -r requirements.txt \
-    && pip install -r yolov5/requirements.txt \
-    && pip install torch==1.13.0 torchvision==0.14.0 --index-url https://download.pytorch.org/whl/cpu \
-#    && apt-get install -y libgl1-mesa-glx \
-    # 删除缓存文件
-    && rm -rf /var/lib/apt/lists/* \
-    && rm -rf ~/.cache/pip
+#RUN apt-get update --fix-missing \
+#    && apt-get install ffmpeg libsm6 libxext6 -y \
+#    && pip install --upgrade pip \
+#    && pip install -r requirements.txt \
+#    && pip install -r yolov5/requirements.txt \
+#    && pip install torch==1.13.0 torchvision==0.14.0 --index-url https://download.pytorch.org/whl/cpu \
+##    && apt-get install -y libgl1-mesa-glx \
+#    # 删除缓存文件
+#    && rm -rf /var/lib/apt/lists/* \
+#    && rm -rf ~/.cache/pip
+
+RUN pip install --upgrade pip \
+    && pip install -r requirements.txt  \
+    && pip install torch==1.13.0 torchvision==0.14.0 --index-url https://download.pytorch.org/whl/cpu  \
+    && rm -rf ~/.cache/pip/* \
+    && apt-get update --fix-missing  \
+    && apt-get install -y --no-install-recommends libgl1-mesa-glx \
+    && pip install -r yolov5/requirements.txt  \
+    && rm -rf ~/.cache/pip/* \
+    && rm -rf /var/lib/apt/lists/*
 
 # 设置环境变量
 ENV PYTHONPATH "${PYTHONPATH}:/app/"
