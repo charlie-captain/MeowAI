@@ -16,12 +16,13 @@ done_list = []
 
 class DetectFile:
 
-    def __init__(self, id, filename, type, tag, model):
+    def __init__(self, id, filename, type, tag, model, score):
         self.id = id
         self.filename = filename
         self.type = type
         self.tag = tag
         self.model = model
+        self.score = score
 
 
 class DetectFileEncoder(json.JSONEncoder):
@@ -31,7 +32,8 @@ class DetectFileEncoder(json.JSONEncoder):
                     'filename': obj.filename,
                     'type': obj.type,
                     'tag': obj.tag,
-                    'model': obj.model}
+                    'model': obj.model,
+                    'score': obj.score}
         return json.JSONEncoder.default(self, obj)
 
 
@@ -41,7 +43,7 @@ class DetectFileDecoder(json.JSONDecoder):
 
     def dict_to_object(self, d):
         if 'id' in d:
-            return DetectFile(d['id'], d['filename'], d['type'], d['tag'], d['model'])
+            return DetectFile(d['id'], d['filename'], d['type'], d['tag'], d['model'], d['score'])
         return d
 
 
@@ -71,17 +73,24 @@ def detect_photo_list(list):
         thumbnail = p['additional']['thumbnail']
         cache_key = thumbnail['cache_key']
         image_content = api.get_photo_by_id(id, cache_key, api.headers)
-        detect_tag = detect.detect(image_content)
+        detect_tag, score = detect.detect(image_content)
         end_time = time.time()
         elapsed_time = round(end_time - start_time, 2)
         logger.info(f'进度: {i + 1}/{len(list)}, {p["filename"]} 识别为 {detect_tag}, 耗时为 {elapsed_time} 秒')
         logger.debug(f'{id} {cache_key} {detect_tag}')
-        detect_file = DetectFile(id, filename=p['filename'], type=p['type'], tag=None, model=detect.model_name)
+        detect_file = DetectFile(id, filename=p['filename'], type=p['type'], tag=None, model=detect.model_name,
+                                 score=score)
         if detect_tag is not None:
-            exist_tags = p['additional']['tag']
-            bind_tag(id, tag_name=detect_tag, exist_tags=exist_tags)
-            detect_file.tag = detect_tag
-            detect_list.append(p)
+            if score >= 0.5:
+                # 可信度阈值过滤
+                exist_tags = p['additional']['tag']
+                bind_tag(id, tag_name=detect_tag, exist_tags=exist_tags)
+                detect_file.tag = detect_tag
+                detect_list.append(p)
+            else:
+                detect_file.tag = detect_tag
+                detect_list.append(p)
+
         done_list.append(detect_file)
     add_to_done_list(done_list)
 

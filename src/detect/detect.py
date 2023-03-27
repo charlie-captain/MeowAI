@@ -43,7 +43,6 @@ def init_model():
 
 
 def detect(image_path):
-    start_time = time.time()
     try:
         # logger.info(f"正在识别 %s", image_path)
         image = Image.open(BytesIO(image_path))
@@ -53,26 +52,26 @@ def detect(image_path):
         image = ImageOps.pad(image, new_size)
         logger.debug(f'修改后图片大小为: {image.width}x{image.height}')
         results = model(image)
-        # 获取检测框、置信度和类别标签
-        scores = results.xyxy[0][:, 4].cpu().numpy()
-        labels = results.xyxy[0][:, 5].cpu().numpy()
-        if len(labels) == 0:
+        # 将检测结果转换为 Dataframe
+        df = results.pandas().xyxy[0]
+        # 按照置信度得分从大到小排序
+        df = df.sort_values(by='confidence', ascending=False)
+        # 获取置信度最大的检测结果
+        best_result = df.iloc[0]
+        # 获取类别和置信度
+        labels_index = best_result['class']
+        confidence = best_result['confidence']
+        if labels_index is None:
             # logger.info('没有识别到任何物体')
-            return None
-        label_index = labels[0]
-        label_text = model.names[label_index]
-        # logger.info(label_text)
-        # print(scores)
+            return None, None
+        label_text = model.names[labels_index]
         if detect_dict.has_label(label_text):
-            end_time = time.time()
-            elapsed_time = round(end_time - start_time, 2)
-            # logger.debug(f"方法执行时间为：{elapsed_time} 秒")
-            return detect_dict.get_tag_by_label(label_text)
+            return detect_dict.get_tag_by_label(label_text), confidence
         else:
-            return None
+            return None, None
     except Exception as e:
         logger.exception("Error: %s", e)
-        return None
+        return None, None
 
 
 def detect_dir():
