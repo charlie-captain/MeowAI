@@ -59,14 +59,15 @@
 
 ### 参数说明
 
-| 参数            | 说明                                         | 例子                | 必选                       |
-|---------------|--------------------------------------------| ------------------- | ------------------------ |
-| user          | 登录用户名                                      | -                   | true                     |
-| pwd           | 登录密码                                       | -                   | true                     |
-| ip            | Nas的地址:端口                                  | 0.0.0.0:5000        | false(default 127.0.0.1:5000) |
-| mode          | 个人文件夹还是共享文件夹                               | "person" or"share"  | false(default person)    |
-| exclude_class | 排除识别的场景(80种), 具体看src/detect/detect_dict.py | ['cat','dog'] | false(default [])        |
-| model         | 模型数据集                                      | yolov5m6             | false(default yolov5m6)   |
+| 参数          | 说明                                                  | 例子               | 必选                          |
+| ------------- | ----------------------------------------------------- | ------------------ | ----------------------------- |
+| user          | 登录用户名                                            | -                  | true                          |
+| pwd           | 登录密码                                              | -                  | true                          |
+| ip            | Nas的地址:端口                                        | 0.0.0.0:5000       | false(default 127.0.0.1:5000) |
+| mode          | 个人文件夹还是共享文件夹                              | "person" or"share" | false(default person)         |
+| exclude_class | 排除识别的场景(80种), 具体看src/detect/detect_dict.py | ['cat','dog']      | false(default [])             |
+| model         | 模型数据集                                            | yolov5m6           | false(default yolov5m6)       |
+| lang          | 标签语言                                              | zh(中文)/en(英文)  | false(default zh)             |
 
 ## 开发
 

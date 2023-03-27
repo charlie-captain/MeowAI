@@ -12,6 +12,7 @@ limit = 100
 # 识别成功列表
 detect_list = []
 done_list = []
+language = 'zh'
 
 
 class DetectFile:
@@ -73,7 +74,7 @@ def detect_photo_list(list):
         thumbnail = p['additional']['thumbnail']
         cache_key = thumbnail['cache_key']
         image_content = api.get_photo_by_id(id, cache_key, api.headers)
-        detect_tag, score = detect.detect(image_content)
+        detect_tag, score = detect.detect(image_content, language)
         end_time = time.time()
         elapsed_time = round(end_time - start_time, 2)
         logger.info(
@@ -153,6 +154,8 @@ def bind_tag(id, tag_name, exist_tags):
 
 
 def start():
+    global language
+    language = os.environ.get('lang', language)
     api.init_var()
     read_done_list()
     start_indexing()
