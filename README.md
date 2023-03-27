@@ -2,7 +2,7 @@
 
 Use Yolov5 to perform offline detection on images and add tags to the images in Synology Photos, supporting the recognition of 80 scenes.
 
-[中文文档](./README-CN.md)
+#### [中文文档](./README-CN.md)
 
 ## How
 
@@ -21,7 +21,12 @@ Extract thumbnail images using Synology API and add labels to images using offli
    ```
 3. run py
    ```
-    user="xxx" pwd="xxx" mode="xxx" detect_class="[\"cat\",\"all\"]" python3 main.py
+    user="xxx" \
+    pwd="xxx" \
+    mode="xxx" \
+    detect_class="[\"cat\",\"all\"]" \
+    ip="192.168.5.1:5000" \
+    python3 main.py
     ```
 
 ### Docker shell
