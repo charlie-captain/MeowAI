@@ -116,5 +116,8 @@ def is_label_in_dict(key):
     return key in classes_dict
 
 
-def get_tag_by_label(label):
-    return classes_dict[label]
+def get_tag_by_label(label, language):
+    if language == 'zh':
+        return classes_dict[label]
+    else:
+        return label
