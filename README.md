@@ -10,7 +10,21 @@ Extract thumbnail images using Synology API and add labels to images using offli
 
 ## Usage
 
-### Docker shell (Recommend)
+### Shell  (Recommend)
+
+1. git clone repository
+2. install requirements.txt
+    ```
+   pip3 install -r requirements.txt
+   pip3 install -r yolov5/requirements.txt
+   pip3 install torch torchvision
+   ```
+3. run py
+   ```
+    user="xxx" pwd="xxx" mode="xxx" detect_class="[\"cat\",\"all\"]" python3 main.py
+    ```
+
+### Docker shell
 
 1. pull docker image
     ```
@@ -47,19 +61,6 @@ This will consume your CPU resources.
    ![picture 3](images/1679625687135.png)
 
 
-### Shell
-
-1. git clone repository
-2. install requirements.txt
-    ```
-   pip3 install -r requirements.txt
-   pip3 install -r yolov5/requirements.txt
-   pip3 install torch torchvision
-   ```
-3. run py
-   ```
-    user="xxx" pwd="xxx" mode="xxx" detect_class="[\"cat\",\"all\"]" python3 main.py
-    ```
 
 
 

@@ -8,8 +8,22 @@
 
 ## 使用方法
 
+### Shell (推荐)
 
-### Docker (推荐)
+1. git clone repository
+2. install requirements.txt
+    ```
+   pip3 install requirements.txt
+   pip3 install yolov5/requirements.txt
+   pip3 install torch torchvision
+   ```
+3. run py
+   ```
+    user="xxx" pwd="xxx" mode="xxx" detect_class="[\"cat\",\"all\"]" python3 main.py
+    ```
+
+
+### Docker 
 
 1. 拉取镜像
     ```
@@ -38,19 +52,6 @@
 
    ![picture 3](images/1679625687135.png)
 
-### Shell
-
-1. git clone repository
-2. install requirements.txt
-    ```
-   pip3 install requirements.txt
-   pip3 install yolov5/requirements.txt
-   pip3 install torch==1.13.0 torchvision==0.14.0
-   ```
-3. run py
-   ```
-    user="xxx" pwd="xxx" mode="xxx" detect_class="[\"cat\",\"all\"]" python3 main.py
-    ```
 
 ### 参数说明
 
