@@ -4,13 +4,13 @@ import time
 from io import BytesIO
 
 import torch
-from PIL import Image
+from PIL import Image, ImageOps
 
 from src.detect import detect_dict
 from src.log.logger import logger
 
 model = None
-model_name = 'yolov5l'
+model_name = 'yolov5m6'
 
 
 def init_model():
@@ -20,8 +20,20 @@ def init_model():
     model_name = os.environ.get('model', model_name)
     logger.info(f'加载模型: {model_name}')
     try:
+        device = None
+        if torch.cuda.is_available():
+            logger.info("CUDA is available.")
+            device = torch.device('cuda')
+        else:
+            logger.info("CUDA is not available.")
+
+        if torch.backends.mps.is_available():
+            logger.info("MPS is available.")
+            device = torch.device("mps")
+        else:
+            logger.info("MPS is not available.")
         model_file = f'./{model_name}.pt'
-        model = torch.hub.load('./yolov5', 'custom', source='local', path=model_file)
+        model = torch.hub.load('./yolov5', 'custom', source='local', path=model_file, device=device)
     except Exception as e:
         logger.error(e)
         exit(-1)
@@ -35,11 +47,15 @@ def detect(image_path):
     try:
         # logger.info(f"正在识别 %s", image_path)
         image = Image.open(BytesIO(image_path))
-        image = image.resize((640, 640))
+        logger.debug(f'图片大小为: {image.width}x{image.height}')
+        # 将图片调整为指定大小，并使用 padding 的方式进行调整
+        new_size = (1280, 1280)
+        image = ImageOps.pad(image, new_size)
+        logger.debug(f'修改后图片大小为: {image.width}x{image.height}')
         results = model(image)
         # 获取检测框、置信度和类别标签
-        scores = results.xyxy[0][:, 4].numpy()
-        labels = results.xyxy[0][:, 5].numpy()
+        scores = results.xyxy[0][:, 4].cpu().numpy()
+        labels = results.xyxy[0][:, 5].cpu().numpy()
         if len(labels) == 0:
             # logger.info('没有识别到任何物体')
             return None
