@@ -1,7 +1,7 @@
 import json
 import os
 
-from src.log.logger import logger
+is_debug = False
 
 
 class Config:
@@ -29,7 +29,7 @@ class Config:
             with open(self.get_config_file_path(), 'r') as f:
                 return json.load(f)
         except Exception as e:
-            logger.error(e)
+            print(e)
         return None
 
 
@@ -37,13 +37,16 @@ curConfig = None
 
 
 def init_config():
+    global is_debug
     global curConfig
+    is_debug = os.environ.get('debug', is_debug)
+    print(f'当前环境: {"Debug环境" if is_debug else "正式环境"}')
     curConfig = Config()
     detect_class = os.environ.get('detect_class', None)
     detect_class = json.loads(detect_class)
-    if detect_class is not None and detect_class != curConfig.detect_class:
+    if detect_class and detect_class != curConfig.detect_class:
         curConfig.detect_class = detect_class
         curConfig.save_cur_config()
-        logger.info(f'保存当前配置 {curConfig.__dict__}')
+        print(f'保存当前配置 {curConfig.__dict__}')
     else:
-        logger.info(f'当前配置为 {curConfig.__dict__}')
+        print(f'当前配置为 {curConfig.__dict__}')

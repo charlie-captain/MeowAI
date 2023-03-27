@@ -1,24 +1,30 @@
 import logging
 import sys
 
+from src.config import config
+
 logger = logging.getLogger('meow')
 
 
 def init_log():
+    level = logging.INFO
+    if config.is_debug:
+        level = logging.DEBUG
+
     # 设置Logger对象的日志级别
-    logger.setLevel(logging.INFO)
+    logger.setLevel(level)
 
     # 创建一个StreamHandler对象，指定输出到sys.stdout
     stream_handler = logging.StreamHandler(sys.stdout)
 
     # 设置StreamHandler对象的日志级别
-    stream_handler.setLevel(logging.INFO)
+    stream_handler.setLevel(level)
 
     # 创建一个FileHandler对象，指定输出到log.txt文件
     file_handler = logging.FileHandler('logs.txt')
 
     # 设置FileHandler对象的日志级别
-    file_handler.setLevel(logging.INFO)
+    file_handler.setLevel(level)
 
     # 创建一个Formatter对象，指定日志格式
     formatter = logging.Formatter('%(name)s - %(levelname)s - %(message)s')

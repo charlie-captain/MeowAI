@@ -52,8 +52,8 @@ This will consume your CPU resources.
 1. git clone repository
 2. install requirements.txt
     ```
-   pip3 install requirements.txt
-   pip3 install yolov5/requirements.txt
+   pip3 install -r requirements.txt
+   pip3 install -r yolov5/requirements.txt
    pip3 install torch torchvision
    ```
 3. run py
@@ -72,17 +72,12 @@ This will consume your CPU resources.
 | ip           | nas ip                                       | 0.0.0.0:5000       | false(default 127.0.0.1:5000) |
 | mode         | person dir or share dir                      | "person" or"share" | false(default person)         |
 | detect_class | detect scenes, see src/detect/detect_dict.py | ['cat','dog']      | false(default ['all'])        |
-| model        | yolov5 model pt file name                    | yolov5l            | false(default yolov5l)        |
+| model        | yolov5 model pt file name                    | yolov5m6            | false(default yolov5m6)        |
 
-model accuracy: yolov5s<yolov5m<yolov5l
-
-model speed: yolov5s>yolov5m>yolov5l
-
-test on mac m1: yolov5s(0.2s), yolov5m(0.3s), yolov5l(0.4s)
 
 ## Dev
 
-Currently using the yolov5s.pt dataset, which can be changed to a larger dataset, more can be viewed on the
+Currently using the yolov5m6.pt dataset, which can be changed to a larger dataset, more can be viewed on the
 website [Yolov5-Github](https://github.com/ultralytics/yolov5).
 
 ### Build Docker
@@ -95,6 +90,13 @@ website [Yolov5-Github](https://github.com/ultralytics/yolov5).
     ./build.sh
     ```
 4. run docker
+
+## Q&A
+
+### How to remove all tags
+```shell
+user="xxx" pwd="xxx" mode="xxx" detect_class="[\"all\"]" python3 src/util/util.py
+```
 
 ## Thanks
 

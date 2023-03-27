@@ -61,27 +61,29 @@
 | ip           | Nas的地址:端口                                    | 0.0.0.0:5000        | false(default 127.0.0.1:5000) |
 | mode         | 个人文件夹还是共享文件夹                          | "person" or"share"  | false(default person)         |
 | detect_class | 识别的场景(67种), 具体看src/detect/detect_dict.py | ['cat','dog','all'] | false(default ['all'])        |
-| model        | 模型数据集                                        | yolov5l             | false(default yolov5l)        |
-
-model 准确率: yolov5s<yolov5m<yolov5l
-
-model 速度: yolov5s>yolov5m>yolov5l
-
-test on mac m1: yolov5s(0.2s), yolov5m(0.3s), yolov5l(0.4s)
+| model        | 模型数据集                                        | yolov5m6             | false(default yolov5m6)        |
 
 ## 开发
 
-目前使用的是Yolov5s.pt数据模型，可以更换更大的数据模型，更多详情请看[Yolov5-Github](https://github.com/ultralytics/yolov5).
+目前使用的是yolov5m6.pt数据模型，可以更换更大的数据模型，更多详情请看[Yolov5-Github](https://github.com/ultralytics/yolov5).
 
 ### 构建Docker镜像
 
 1. 安装Docker
 2. 克隆项目
-3. 构建Docker镜像
+3. 修改代码
+4. 构建Docker镜像
     ```shell
     chmod 777 ./build.sh
     ./build.sh
     ```
+
+## Q&A
+
+### 如何清除所有已经识别的标签
+```shell
+user="xxx" pwd="xxx" mode="xxx" detect_class="[\"all\"]" python3 src/util/util.py
+```
 
 ## Thanks
 
