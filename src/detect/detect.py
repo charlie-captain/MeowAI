@@ -57,6 +57,8 @@ def detect(image_path):
         # 按照置信度得分从大到小排序
         df = df.sort_values(by='confidence', ascending=False)
         # 获取置信度最大的检测结果
+        if len(df.values.tolist()) == 0:
+            return None, None
         best_result = df.iloc[0]
         # 获取类别和置信度
         labels_index = best_result['class']
