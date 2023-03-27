@@ -22,9 +22,8 @@
     user="xxx" \
     pwd="xxx" \
     mode="xxx" \
-    detect_class="[\"cat\",\"all\"]" \
+    exclude_class="[\"cat\"]" \
     ip="192.168.5.1:5000" \
-
     python3 main.py
     ```
 
@@ -60,14 +59,14 @@
 
 ### 参数说明
 
-| 参数         | 说明                                              | 例子                | 必选                          |
-| ------------ | ------------------------------------------------- | ------------------- | ----------------------------- |
-| user         | 登录用户名                                        | -                   | true                          |
-| pwd          | 登录密码                                          | -                   | true                          |
-| ip           | Nas的地址:端口                                    | 0.0.0.0:5000        | false(default 127.0.0.1:5000) |
-| mode         | 个人文件夹还是共享文件夹                          | "person" or"share"  | false(default person)         |
-| detect_class | 识别的场景(80种), 具体看src/detect/detect_dict.py | ['cat','dog','all'] | false(default ['all'])        |
-| model        | 模型数据集                                        | yolov5m6             | false(default yolov5m6)        |
+| 参数            | 说明                                         | 例子                | 必选                       |
+|---------------|--------------------------------------------| ------------------- | ------------------------ |
+| user          | 登录用户名                                      | -                   | true                     |
+| pwd           | 登录密码                                       | -                   | true                     |
+| ip            | Nas的地址:端口                                  | 0.0.0.0:5000        | false(default 127.0.0.1:5000) |
+| mode          | 个人文件夹还是共享文件夹                               | "person" or"share"  | false(default person)    |
+| exclude_class | 排除识别的场景(80种), 具体看src/detect/detect_dict.py | ['cat','dog'] | false(default [])        |
+| model         | 模型数据集                                      | yolov5m6             | false(default yolov5m6)   |
 
 ## 开发
 
@@ -88,7 +87,7 @@
 
 ### 如何清除所有已经识别的标签
 ```shell
-user="xxx" pwd="xxx" mode="xxx" detect_class="[\"all\"]" python3 src/util/util.py
+user="xxx" pwd="xxx" mode="xxx" exclude_class="[\"dog\"]" python3 src/util/util.py
 ```
 
 ## Thanks

@@ -77,7 +77,7 @@ def detect_photo_list(list):
         end_time = time.time()
         elapsed_time = round(end_time - start_time, 2)
         logger.info(
-            f'进度: {i + 1}/{len(list)}, {p["filename"]} 识别为 {detect_tag}, 准确度为 {round(score, 2)} 耗时为 {elapsed_time} 秒')
+            f'进度: {i + 1}/{len(list)}, {p["filename"]} 识别为 {detect_tag}, 准确度为 {round(score, 2) if score else 0} 耗时为 {elapsed_time} 秒')
         logger.debug(f'{id} {cache_key} {detect_tag}')
         detect_file = DetectFile(id, filename=p['filename'], type=p['type'], tag=None, model=detect.model_name,
                                  score=score)
