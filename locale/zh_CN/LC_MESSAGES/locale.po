@@ -1,0 +1,80 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-03-28 11:26+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/api/api.py:125
+msgid "tag generate success:"
+msgstr "标签创建成功:"
+
+#: src/api/api.py:131
+msgid "tag generate failed"
+msgstr "标签创建失败"
+
+#: src/api/api.py:149
+msgid "tag bind success:"
+msgstr "标签绑定成功:"
+
+#: src/api/api.py:155 src/api/api.py:160
+msgid "tag bind failed:"
+msgstr "标签绑定失败:"
+
+#: src/api/api.py:202
+msgid "tag remove success:"
+msgstr "标签移除成功:"
+
+#: src/api/api.py:208 src/api/api.py:212
+msgid "tag remove failed:"
+msgstr "标签移除失败:"
+
+#: src/api/server.py:63
+#, python-format
+msgid "Detect %d images, total handle %d photos"
+msgstr "识别成功 %d 张图片, 共处理 %d 张图片"
+
+#: src/api/server.py:82
+#, python-format
+msgid "Progress: %s, %s detect %s, score %f, cost %f s"
+msgstr "进度: %s, %s 识别为 %s, 准确率为 %f, 耗时为 %f 秒"
+
+#: src/api/server.py:113
+msgid "read done_list: "
+msgstr "读取已完成列表: "
+
+#: src/api/server.py:117
+msgid "done_list created！"
+msgstr "已完成列表生成"
+
+#: src/config/config.py:44
+msgid "Env:"
+msgstr "当前环境:"
+
+#: src/detect/detect.py:22
+msgid "Load model:"
+msgstr "加载模型:"
+
+#: src/detect/detect.py:51
+msgid "image size:"
+msgstr "图片大小:"
+
+#: src/detect/detect.py:56
+msgid "image size changed:"
+msgstr "修改后图片大小:"
+
+#: src/detect/detect_dict.py:98
+msgid "exclude_class:"
+msgstr "排除的场景:"

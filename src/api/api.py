@@ -1,9 +1,11 @@
+import gettext
 import json
 import os
 
 import requests
 
 from src.detect import detect_dict
+from src.locale import locale
 from src.log.logger import logger
 
 base_url = 'http://127.0.0.1:5000'
@@ -21,6 +23,7 @@ username = None
 pwd = None
 # token错误码
 token_error_code = ['119', '120', '150']
+_ = locale.lc
 
 
 def get_token():
@@ -120,12 +123,14 @@ def create_tag(tag_name):
     response = requests.post(url, data, headers=headers)
     data = json.loads(response.content)
     if data['success']:
-        logger.info(f'标签创建成功: {tag_name}')
+        text = _("tag generate success:")
+        logger.info(f'{text} {tag_name}')
         tags.append(data['data']['tag'])
     else:
         if data['error']['code'] in token_error_code:
             get_token()
-        logger.info(f'标签创建失败: {tag_name}')
+        text = _("tag generate failed")
+        logger.info(f'{text}: {tag_name}')
 
 
 def bind_tag(id, tag_id, tag_name):
@@ -142,16 +147,19 @@ def bind_tag(id, tag_id, tag_name):
     try:
         data = json.loads(response.content)
         if data['success']:
-            logger.debug(f'标签绑定成功: id={id} {tag_name}')
+            text = _("tag bind success:")
+            logger.debug(f'{text} id={id} {tag_name}')
             return True
         else:
             if data['error']['code'] in token_error_code:
                 get_token()
-            logger.error(f'标签绑定失败: id={id} {tag_name}')
+            text = _("tag bind failed:")
+            logger.error(f'{text} id={id} {tag_name}')
             return False
     except Exception as e:
         logger.error(e)
-        logger.error(f'标签绑定失败: id={id} {tag_name}')
+        text = _("tag bind failed:")
+        logger.error(f'{text} id={id} {tag_name}')
 
 
 def get_tag_id_by_name(tag_name):
@@ -192,15 +200,18 @@ def remove_tags(id, tag_ids):
     try:
         data = response.json()
         if data['success']:
-            logger.debug(f'标签移除成功: id={id} {tag_ids}')
+            text = _("tag remove success:")
+            logger.debug(f'{text} id={id} {tag_ids}')
             return True
         else:
             if data['error']['code'] in token_error_code:
                 get_token()
-            logger.error(f'标签移除失败: id={id} {tag_ids}')
+            text = _("tag remove failed:")
+            logger.error(f'{text} id={id} {tag_ids}')
             return False
     except Exception as e:
-        logger.error(f'标签移除失败: id={id} {tag_ids}')
+        text = _("tag remove failed:")
+        logger.error(f'{text} id={id} {tag_ids}')
         logger.error(e)
         return False
 

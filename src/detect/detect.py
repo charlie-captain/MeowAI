@@ -1,3 +1,4 @@
+import gettext
 import json
 import os
 import time
@@ -7,18 +8,20 @@ import torch
 from PIL import Image, ImageOps
 
 from src.detect import detect_dict
+from src.locale import locale
 from src.log.logger import logger
 
 model = None
 model_name = 'yolov5m6'
-
+_=locale.lc
 
 def init_model():
     global model
     global model_name
     start_time = time.time()
     model_name = os.environ.get('model', model_name)
-    logger.info(f'加载模型: {model_name}')
+    text = _("Load model:")
+    logger.info(f'{text} {model_name}')
     try:
         device = None
         if torch.cuda.is_available():
@@ -39,18 +42,20 @@ def init_model():
         exit(-1)
     end_time = time.time()
     elapsed_time = round(end_time - start_time, 2)
-    logger.info(f"加载模型：{elapsed_time} 秒")
+    logger.info(f'{text} {elapsed_time} s')
 
 
 def detect(image_path, language):
     try:
         # logger.info(f"正在识别 %s", image_path)
         image = Image.open(BytesIO(image_path))
-        logger.debug(f'图片大小为: {image.width}x{image.height}')
+        text_image_size = _("image size:")
+        logger.debug(f'{text_image_size} {image.width}x{image.height}')
         # 将图片调整为指定大小，并使用 padding 的方式进行调整
         new_size = (1280, 1280)
         image = ImageOps.pad(image, new_size)
-        logger.debug(f'修改后图片大小为: {image.width}x{image.height}')
+        text_image_size_changed = _("image size changed:")
+        logger.debug(f'{text_image_size_changed} {image.width}x{image.height}')
         results = model(image)
         # 将检测结果转换为 Dataframe
         df = results.pandas().xyxy[0]

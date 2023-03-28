@@ -1,6 +1,10 @@
+import gettext
+
 from src.config import config
+from src.locale import locale
 from src.log.logger import logger
 
+_ = locale.lc
 classes_dict = {"person": "人",
                 "bicycle": "自行车",
                 "car": "汽车",
@@ -93,8 +97,8 @@ def init_model_var():
     logger.info(cur_config)
     exclude_class = cur_config.exclude_class
     is_detect_all = len(exclude_class) == 0
-
-    logger.info(f'排除的场景为: {exclude_class}')
+    text = _("exclude_class:")
+    logger.info(f'{text} {exclude_class}')
 
 
 def has_label(label):

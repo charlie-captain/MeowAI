@@ -1,3 +1,4 @@
+import gettext
 import json
 import os
 import time
@@ -5,6 +6,7 @@ import time
 from src import log
 from src.api import api
 from src.detect import detect, detect_dict
+from src.locale import locale
 from src.log.logger import logger
 
 offset = 0
@@ -12,7 +14,7 @@ limit = 100
 # 识别成功列表
 detect_list = []
 done_list = []
-language = 'zh'
+_ = locale.lc
 
 
 class DetectFile:
@@ -59,7 +61,8 @@ def start_indexing():
             break
         detect_photo_list(list)
         offset += limit
-        logger.info(f'成功识别到 %d 张图片, 共处理 %d 张图片', len(detect_list), len(done_list))
+        text_info = _("Detect %d images, total handle %d photos")
+        logger.info(f'{text_info}', len(detect_list), len(done_list))
         detect_list = []
 
 
@@ -74,11 +77,16 @@ def detect_photo_list(list):
         thumbnail = p['additional']['thumbnail']
         cache_key = thumbnail['cache_key']
         image_content = api.get_photo_by_id(id, cache_key, api.headers)
-        detect_tag, score = detect.detect(image_content, language)
+        detect_tag, score = detect.detect(image_content, locale.language)
         end_time = time.time()
         elapsed_time = round(end_time - start_time, 2)
-        logger.info(
-            f'进度: {i + 1}/{len(list)}, {p["filename"]} 识别为 {detect_tag}, 准确度为 {round(score, 2) if score else 0} 耗时为 {elapsed_time} 秒')
+        text_info = _("Progress: %s, %s detect %s, score %f, cost %f s")
+        logger.info(f'{text_info}',
+                    f'{i + 1} / {len(list)}',
+                    p["filename"],
+                    detect_tag,
+                    round(score, 2) if score else 0,
+                    elapsed_time)
         logger.debug(f'{id} {cache_key} {detect_tag}')
         detect_file = DetectFile(id, filename=p['filename'], type=p['type'], tag=None, model=detect.model_name,
                                  score=score)
@@ -89,12 +97,11 @@ def detect_photo_list(list):
                 bind_tag(id, tag_name=detect_tag, exist_tags=exist_tags)
                 detect_file.tag = detect_tag
                 detect_list.append(p)
-            else:
-                detect_file.tag = detect_tag
-                detect_list.append(p)
-
+        else:
+            detect_file.tag = detect_tag
+            detect_list.append(p)
         done_list.append(detect_file)
-    add_to_done_list(done_list)
+        add_to_done_list(done_list)
 
 
 def read_done_list():
@@ -104,10 +111,11 @@ def read_done_list():
             data = json.load(f, cls=DetectFileDecoder)
         global done_list
         done_list = data
-        logger.info(f'读取已完成列表: {len(done_list)}')
+        text_done = _("read done_list: ")
+        logger.info(f'{text_done}{len(done_list)}')
     except FileNotFoundError:
         os.mknod(done_list_file)
-        logger.info("文件创建成功！")
+        logger.info(_("done_list created！"))
     except Exception as e:
         logger.error(e)
 
@@ -154,8 +162,6 @@ def bind_tag(id, tag_name, exist_tags):
 
 
 def start():
-    global language
-    language = os.environ.get('lang', language)
     api.init_var()
     read_done_list()
     start_indexing()

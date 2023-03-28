@@ -5,6 +5,7 @@ from src.config import config
 
 
 # 移除全部已经识别的标签, 谨慎使用
+# Warning: remove all recognize tags, use carefully
 def remove_all_exist_tags():
     offset = 0
     limit = 100
