@@ -54,16 +54,27 @@ def start_indexing():
     global offset
     global detect_list
     has_more = True
-    while (has_more):
-        list = api.get_photos(offset, limit)
-        has_more = list is not None and len(list) > 0
-        if not has_more:
-            break
-        detect_photo_list(list)
-        offset += limit
-        text_info = _("Detect %d images, total handle %d photos")
-        logger.info(f'{text_info}', len(detect_list), len(done_list))
-        detect_list = []
+    while True:
+        while has_more:
+            list = api.get_photos(offset, limit)
+            has_more = list is not None and len(list) > 0
+            if not has_more:
+                break
+            detect_photo_list(list)
+            offset += limit
+            text_info = _("Detect %d images, total handle %d photos")
+            logger.info(f'{text_info}', len(detect_list), len(done_list))
+            detect_list = []
+        text_sleep = _("Sleep...")
+        logger.info(text_sleep)
+        # sleep for a while
+        time.sleep(60 * 5)
+        # check has more
+        total = api.count_total_photos()
+        if total > len(done_list):
+            has_more = True
+            text_wake = _("Wake...")
+            logger.info(text_wake)
 
 
 def detect_photo_list(list):
@@ -80,7 +91,7 @@ def detect_photo_list(list):
         detect_tag, score = detect.detect(image_content, locale.language)
         end_time = time.time()
         elapsed_time = round(end_time - start_time, 2)
-        text_info = _("Progress: %s, %s detect %s, score %f, cost %f s")
+        text_info = _("Progress: %s, %s detect %s, score %.2f, cost %.2f s")
         logger.info(f'{text_info}',
                     f'{i + 1} / {len(list)}',
                     p["filename"],

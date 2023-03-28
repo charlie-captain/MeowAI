@@ -1,6 +1,7 @@
 # MeowAI
 
-Use Yolov5 to perform offline detection on images and add tags to the images in Synology Photos, supporting the recognition of 80 scenes.
+Use Yolov5 to perform offline detection on images and add tags to the images in Synology Photos, supporting the
+recognition of 80 scenes.
 
 #### [中文文档](./README-CN.md)
 
@@ -30,6 +31,8 @@ Extract thumbnail images using Synology API and add labels to images using offli
     ```
 
 ### Docker shell
+
+Docker will run longer than the shell command above because it will forever monitor for new photos.
 
 1. pull docker image
     ```
@@ -65,14 +68,10 @@ This will consume your CPU resources.
 
    ![picture 3](images/1679625687135.png)
 
-
-
-
-
 ### Arguments
 
 | Argument      | Description                                          | Demo               | Require                       |
-| ------------- | ---------------------------------------------------- | ------------------ |-------------------------------|
+|---------------|------------------------------------------------------|--------------------|-------------------------------|
 | user          | login user                                           | -                  | true                          |
 | pwd           | login password                                       | -                  | true                          |
 | ip            | nas ip                                               | 0.0.0.0:5000       | false(default 127.0.0.1:5000) |
@@ -80,7 +79,6 @@ This will consume your CPU resources.
 | exclude_class | exclude detect scenes, see src/detect/detect_dict.py | ['cat','dog']      | false(default [])             |
 | model         | yolov5 model pt file name                            | yolov5m6           | false(default yolov5m6)       |
 | lang          | tag language                                         | zh/en              | false(default en)             |
-
 
 ## Dev
 
@@ -101,6 +99,7 @@ website [Yolov5-Github](https://github.com/ultralytics/yolov5).
 ## Q&A
 
 ### How to remove all tags
+
 ```shell
 user="xxx" pwd="xxx" mode="xxx" exclude_class="[\"dog\"]" python3 src/util/util.py
 ```

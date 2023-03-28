@@ -13,11 +13,13 @@ from src.log.logger import logger
 
 model = None
 model_name = 'yolov5m6'
-_=locale.lc
+_ = locale.lc
+
 
 def init_model():
     global model
     global model_name
+    detect_dict.init_model_var()
     start_time = time.time()
     model_name = os.environ.get('model', model_name)
     text = _("Load model:")

@@ -188,7 +188,7 @@ def get_photo_info_by_id(id):
 
 
 def remove_tags(id, tag_ids):
-    url = f'{base_url}/webapi/entry.cgi/SYNO.FotoTeam.Browse.GeneralTag'
+    url = f'{base_url}/webapi/entry.cgi/{api_pre}.Browse.GeneralTag'
     data = {
         'api': f'{api_pre}.Browse.Item',
         'method': 'remove_tag',
@@ -216,6 +216,36 @@ def remove_tags(id, tag_ids):
         return False
 
 
+def count_total_photos():
+    url = f'{base_url}/webapi/entry.cgi/{api_pre}.Browse.Timeline'
+    data = {
+        'api': f'{api_pre}.Browse.Timeline',
+        'method': 'get',
+        'version': '2',
+        'timeline_group_unit': 'day',
+    }
+    response = requests.post(url, data, headers=headers)
+    try:
+        data = response.json()
+        if data['success']:
+            section_list = data['data']['section']
+            total = 0
+            for section in section_list:
+                if section['limit']:
+                    total += section['limit']
+            return total
+        else:
+            if data['error']['code'] in token_error_code:
+                get_token()
+            text = _("get_time_line failed:")
+            logger.error(f'{text}')
+            return 0
+    except Exception as e:
+        text = _("get_time_line failed:")
+        logger.error(f'{text} %s', e)
+        return 0
+
+
 def init_var():
     global mode
     global api_pre
@@ -232,7 +262,6 @@ def init_var():
     else:
         api_pre = 'SYNO.FotoTeam'
     base_url = f'http://{ip}'
-    detect_dict.init_model_var()
     get_token()
     tags = get_tags()
     logger.info(tags)
