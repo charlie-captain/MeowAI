@@ -1,8 +1,11 @@
+import gettext
 import json
 import os
 
-is_debug = False
+from src.locale import locale
 
+is_debug = False
+_ = locale.lc
 
 class Config:
     # 排除种类
@@ -40,7 +43,8 @@ def init_config():
     global is_debug
     global curConfig
     is_debug = os.environ.get('debug', is_debug)
-    print(f'当前环境: {"Debug环境" if is_debug else "正式环境"}')
+    text_env = _("Env:")
+    print(f'{text_env} {"Debug" if is_debug else "Release"}')
     curConfig = Config()
     exclude_class = os.environ.get('exclude_class', None)
     if exclude_class:
@@ -49,4 +53,4 @@ def init_config():
         curConfig.exclude_class = exclude_class
         curConfig.save_cur_config()
 
-    print(f'当前配置为 {curConfig.__dict__}')
+    print(f'CurConfig = {curConfig.__dict__}')
