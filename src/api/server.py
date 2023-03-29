@@ -88,31 +88,37 @@ def detect_photo_list(list):
         thumbnail = p['additional']['thumbnail']
         cache_key = thumbnail['cache_key']
         image_content = api.get_photo_by_id(id, cache_key, api.headers)
-        detect_tag, score = detect.detect(image_content, locale.language)
+        label_text, score = detect.detect(image_content)
         end_time = time.time()
         elapsed_time = round(end_time - start_time, 2)
-        text_info = _("Progress: %s, %s detect %s, score %.2f, cost %.2f s")
+        text_info = _("Progress: %s, %s detect %s, score %.2f, cost %.2fs%s")
+
+        if detect_dict.is_label_in_dict(label_text):
+            detect_tag = detect_dict.get_tag_by_label(label_text, locale.language)
+        else:
+            detect_tag = None
+        is_exclude = detect_dict.is_label_exclude(label_text)
         logger.info(f'{text_info}',
-                    f'{i + 1} / {len(list)}',
+                    f'{i + 1}/{len(list)}',
                     p["filename"],
                     detect_tag,
                     round(score, 2) if score else 0,
-                    elapsed_time)
-        logger.debug(f'{id} {cache_key} {detect_tag}')
-        detect_file = DetectFile(id, filename=p['filename'], type=p['type'], tag=None, model=detect.model_name,
+                    elapsed_time,
+                    f'{", excluded" if is_exclude else ""}')
+
+        detect_file = DetectFile(id, filename=p['filename'], type=p['type'], tag=detect_tag, model=detect.model_name,
                                  score=score)
         if detect_tag is not None:
             if score >= 0.7:
-                # 可信度阈值过滤
-                exist_tags = p['additional']['tag']
-                bind_tag(id, tag_name=detect_tag, exist_tags=exist_tags)
-                detect_file.tag = detect_tag
+                if not is_exclude:
+                    exist_tags = p['additional']['tag']
+                    bind_tag(id, tag_name=detect_tag, exist_tags=exist_tags)
                 detect_list.append(p)
         else:
             detect_file.tag = detect_tag
             detect_list.append(p)
         done_list.append(detect_file)
-        add_to_done_list(done_list)
+    add_to_done_list(done_list)
 
 
 def read_done_list():
@@ -128,7 +134,7 @@ def read_done_list():
         os.mknod(done_list_file)
         logger.info(_("done_list created！"))
     except Exception as e:
-        logger.error(e)
+        logger.exception(e)
 
 
 def get_done_list_file_path():
@@ -151,7 +157,7 @@ def add_to_done_list(list):
     for done in list:
         done_list.append(done)
     with open(get_done_list_file_path(), 'w') as f:
-        json.dump(done_list, f, cls=DetectFileEncoder)
+        json.dump(done_list, f, cls=DetectFileEncoder, ensure_ascii=False)
 
 
 def bind_tag(id, tag_name, exist_tags):
@@ -164,10 +170,8 @@ def bind_tag(id, tag_name, exist_tags):
     if exist_tags and len(exist_tags) > 0:
         for e_tag in exist_tags:
             e_tag_name = e_tag['name']
-            if e_tag_name != tag_name:
-                if e_tag_name in detect_dict.classes_dict.values():
-                    # todo remove old tag
-                    break
+            if e_tag_name == tag_name:
+                return
 
     api.bind_tag(id, tag_id, tag_name)
 

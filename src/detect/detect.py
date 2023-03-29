@@ -47,7 +47,7 @@ def init_model():
     logger.info(f'{text} {elapsed_time} s')
 
 
-def detect(image_path, language):
+def detect(image_path):
     try:
         # logger.info(f"正在识别 %s", image_path)
         image = Image.open(BytesIO(image_path))
@@ -74,10 +74,7 @@ def detect(image_path, language):
             # logger.info('没有识别到任何物体')
             return None, None
         label_text = model.names[labels_index]
-        if detect_dict.has_label(label_text):
-            return detect_dict.get_tag_by_label(label_text, language), confidence
-        else:
-            return None, None
+        return label_text, confidence
     except Exception as e:
         logger.exception("Error: %s", e)
         return None, None
