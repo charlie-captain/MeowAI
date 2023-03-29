@@ -48,8 +48,8 @@ msgstr "识别成功 %d 张图片, 共处理 %d 张图片"
 
 #: src/api/server.py:82
 #, python-format
-msgid "Progress: %s, %s detect %s, score %.2f, cost %.2f s"
-msgstr "进度: %s, %s 识别为 %s, 准确率为 %.2f, 耗时为 %.2f 秒"
+msgid "Progress: %s, %s detect %s, score %.2f, cost %.2fs%s"
+msgstr "进度: %s, %s 识别为 %s, 准确率为 %.2f, 耗时为 %.2f秒%s"
 
 #: src/api/server.py:113
 msgid "read done_list: "

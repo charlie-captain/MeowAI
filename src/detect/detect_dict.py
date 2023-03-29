@@ -101,19 +101,14 @@ def init_model_var():
     logger.info(f'{text} {exclude_class}')
 
 
-def has_label(label):
+def is_label_exclude(label):
     if is_detect_all:
-        return is_label_in_dict(label)
+        return False
     else:
-        is_exclude = False
         for d in config.curConfig.exclude_class:
             if d == label:
-                is_exclude = True
-                break
-        if is_exclude:
-            return False
-        else:
-            return is_label_in_dict(label)
+                return True
+        return False
 
 
 def is_label_in_dict(key):
