@@ -75,6 +75,8 @@ def start_indexing():
             has_more = True
             text_wake = _("Wake...")
             logger.info(text_wake)
+            # reset offset
+            offset = 0
 
 
 def detect_photo_list(list):
