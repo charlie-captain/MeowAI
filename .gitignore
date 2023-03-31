@@ -131,4 +131,5 @@ logs.txt
 done_list.json
 make_docker.sh
 .idea
+.DS_Store
 
