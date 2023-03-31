@@ -1,31 +1,36 @@
-import gettext
 import json
 import os
 import time
+from typing import Optional
 
 from src import log
 from src.api import api
 from src.detect import detect, detect_dict
+from src.executor import executor
 from src.locale import locale
 from src.log.logger import logger
 
+score_threshold = 0.7
 offset = 0
 limit = 100
 # 识别成功列表
 detect_list = []
 done_list = []
 _ = locale.lc
+_executor: Optional[executor.DetectExecutor] = None
 
 
 class DetectFile:
 
-    def __init__(self, id, filename, type, tag, model, score):
+    def __init__(self, id, filename, type, tag, model, score, exclude, cost):
         self.id = id
         self.filename = filename
         self.type = type
         self.tag = tag
         self.model = model
         self.score = score
+        self.exclude = exclude
+        self.cost = cost
 
 
 class DetectFileEncoder(json.JSONEncoder):
@@ -36,7 +41,10 @@ class DetectFileEncoder(json.JSONEncoder):
                     'type': obj.type,
                     'tag': obj.tag,
                     'model': obj.model,
-                    'score': obj.score}
+                    'score': obj.score,
+                    'exclude': obj.exclude,
+                    'cost': obj.cost
+                    }
         return json.JSONEncoder.default(self, obj)
 
 
@@ -46,7 +54,8 @@ class DetectFileDecoder(json.JSONDecoder):
 
     def dict_to_object(self, d):
         if 'id' in d:
-            return DetectFile(d['id'], d['filename'], d['type'], d['tag'], d['model'], d['score'])
+            return DetectFile(d['id'], d['filename'], d['type'], d['tag'], d['model'], d['score'], d.get('exclude'),
+                              d.get('cost'))
         return d
 
 
@@ -79,47 +88,45 @@ def start_indexing():
             offset = 0
 
 
+def detect_photo(id, p):
+    start_time = time.time()
+    thumbnail = p['additional']['thumbnail']
+    cache_key = thumbnail['cache_key']
+    image_content = api.get_photo_by_id(id, cache_key, api.headers)
+    label_text, score = detect.detect(image_content)
+    end_time = time.time()
+    elapsed_time = round(end_time - start_time, 2)
+    if detect_dict.is_label_in_dict(label_text):
+        detect_tag = detect_dict.get_tag_by_label(label_text, locale.language)
+    else:
+        detect_tag = None
+    score = round(score, 3) if score else 0
+    is_exclude = detect_dict.is_label_exclude(label_text)
+    detect_file = DetectFile(id, filename=p['filename'], type=p['type'], tag=detect_tag, model=detect.model_name,
+                             score=score, exclude=is_exclude, cost=elapsed_time)
+    if detect_tag is not None and score >= score_threshold and not is_exclude:
+        exist_tags = p['additional']['tag']
+        bind_tag(id, tag_name=detect_tag, exist_tags=exist_tags)
+    return detect_file
+
+
 def detect_photo_list(list):
     global detect_list
-    done_list = []
+    start_time = time.time()
     for i, p in enumerate(list):
         id = p['id']
         if has_done(id):
             continue
-        start_time = time.time()
-        thumbnail = p['additional']['thumbnail']
-        cache_key = thumbnail['cache_key']
-        image_content = api.get_photo_by_id(id, cache_key, api.headers)
-        label_text, score = detect.detect(image_content)
-        end_time = time.time()
-        elapsed_time = round(end_time - start_time, 2)
-        text_info = _("Progress: %s, %s detect %s, score %.2f, cost %.2fs%s")
-
-        if detect_dict.is_label_in_dict(label_text):
-            detect_tag = detect_dict.get_tag_by_label(label_text, locale.language)
-        else:
-            detect_tag = None
-        is_exclude = detect_dict.is_label_exclude(label_text)
-        logger.info(f'{text_info}',
-                    f'{i + 1}/{len(list)}',
-                    p["filename"],
-                    detect_tag,
-                    round(score, 2) if score else 0,
-                    elapsed_time,
-                    f'{", excluded" if is_exclude else ""}')
-
-        detect_file = DetectFile(id, filename=p['filename'], type=p['type'], tag=detect_tag, model=detect.model_name,
-                                 score=score)
-        if detect_tag is not None:
-            if score >= 0.7:
-                if not is_exclude:
-                    exist_tags = p['additional']['tag']
-                    bind_tag(id, tag_name=detect_tag, exist_tags=exist_tags)
-                detect_list.append(p)
-        else:
-            detect_file.tag = detect_tag
-            detect_list.append(p)
-        done_list.append(detect_file)
+        _executor.add_task(executor.DetectTask(i, id, len(list), p, detect_photo))
+    _executor.run()
+    results: Optional[map] = _executor.wait_completion()
+    done_list = []
+    for key, value in results.items():
+        if value.tag is not None:
+            detect_list.append(value)
+        done_list.append(value)
+    end_time = time.time()
+    logger.debug(f'detect_photo_list cost = {end_time - start_time}s')
     add_to_done_list(done_list)
 
 
@@ -178,7 +185,9 @@ def bind_tag(id, tag_name, exist_tags):
     api.bind_tag(id, tag_id, tag_name)
 
 
-def start():
+def start(executor):
+    global _executor
+    _executor = executor
     api.init_var()
     read_done_list()
     start_indexing()

@@ -52,12 +52,12 @@ def detect(image_path):
         # logger.info(f"正在识别 %s", image_path)
         image = Image.open(BytesIO(image_path))
         text_image_size = _("image size:")
-        logger.debug(f'{text_image_size} {image.width}x{image.height}')
+        # logger.debug(f'{text_image_size} {image.width}x{image.height}')
         # 将图片调整为指定大小，并使用 padding 的方式进行调整
         new_size = (1280, 1280)
         image = ImageOps.pad(image, new_size)
         text_image_size_changed = _("image size changed:")
-        logger.debug(f'{text_image_size_changed} {image.width}x{image.height}')
+        # logger.debug(f'{text_image_size_changed} {image.width}x{image.height}')
         results = model(image)
         # 将检测结果转换为 Dataframe
         df = results.pandas().xyxy[0]
