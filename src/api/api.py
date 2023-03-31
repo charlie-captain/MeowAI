@@ -48,89 +48,104 @@ def get_token():
 
 
 def get_tags():
-    url = f'{base_url}/webapi/entry.cgi/{api_pre}.Browse.GeneralTag'
-    data = {
-        'api': f'{api_pre}.Browse.GeneralTag',
-        'method': 'list',
-        'version': '1',
-        'limit': '500',
-        'offset': '0'
-    }
-    response = requests.post(url, data, headers=headers)
-    data = json.loads(response.content)
-    if data['success']:
-        list = data['data']['list']
-        return list
-    else:
-        if data['error']['code'] in token_error_code:
-            get_token()
-        logger.info(response.content)
-    return []
+    try:
+        url = f'{base_url}/webapi/entry.cgi/{api_pre}.Browse.GeneralTag'
+        data = {
+            'api': f'{api_pre}.Browse.GeneralTag',
+            'method': 'list',
+            'version': '1',
+            'limit': '500',
+            'offset': '0'
+        }
+        response = requests.post(url, data, headers=headers)
+        data = json.loads(response.content)
+        if data['success']:
+            list = data['data']['list']
+            return list
+        else:
+            if data['error']['code'] in token_error_code:
+                get_token()
+            logger.info(response.content)
+        return []
+    except Exception as e:
+        logger.exception(e)
+        return []
 
 
 def get_photos(offset, limit):
-    logger.info(f'current offset = {offset} limit = {limit}')
-    url = f'{base_url}/webapi/entry.cgi/{api_pre}.Browse.Item'
-    data = {
-        "api": f"{api_pre}.Browse.Item",
-        "method": "list",
-        "version": "1",
-        "offset": offset,
-        "limit": limit,
-        "additional": '["thumbnail","tag"]',
-        "timeline_group_unit": '"day"',
-        #     'start_time':,
-        # 'end_time':
-    }
-    # logger.info(headers)
-    response = requests.post(url, data=data, headers=headers)
-    data = json.loads(response.content)
-    # logger.info(data)
-    if data['success']:
-        list = data['data']['list']
-        logger.info(f'get_photos: {len(list)}')
-        return list
-    else:
-        if data['error']['code'] in token_error_code:
-            get_token()
-        logger.error(response.content)
+    try:
+        logger.info(f'current offset = {offset} limit = {limit}')
+        url = f'{base_url}/webapi/entry.cgi/{api_pre}.Browse.Item'
+        data = {
+            "api": f"{api_pre}.Browse.Item",
+            "method": "list",
+            "version": "1",
+            "offset": offset,
+            "limit": limit,
+            "additional": '["thumbnail","tag"]',
+            "timeline_group_unit": '"day"',
+            #     'start_time':,
+            # 'end_time':
+        }
+        # logger.info(headers)
+        response = requests.post(url, data=data, headers=headers)
+        data = json.loads(response.content)
+        # logger.info(data)
+        if data['success']:
+            list = data['data']['list']
+            logger.info(f'get_photos: {len(list)}')
+            return list
+        else:
+            if data['error']['code'] in token_error_code:
+                get_token()
+            logger.error(response.content)
+            return None
+    except Exception as e:
+        logger.exception(e)
         return None
 
 
 def get_photo_by_id(id, cache_key, headers):
-    # logger.info(f'{id}  {cache_key}')
-    url = f'{base_url}/webapi/entry.cgi?id={id}&cache_key={cache_key}&type=unit&size=xl&api={api_pre}.Thumbnail&method=get&version=2&SynoToken=NXibb.RkEVsCY'
-    # logger.info(url)
-    headers[
-        'Accept'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
-    headers['Accept-Encoding'] = 'gzip, deflate'
-    response = requests.get(url, headers=headers)
-    if response.status_code == 200:
-        return response.content
-    else:
-        logger.info(response.content)
-    return False
+    try:
+        # logger.info(f'{id}  {cache_key}')
+        url = f'{base_url}/webapi/entry.cgi?id={id}&cache_key={cache_key}&type=unit&size=xl&api={api_pre}.Thumbnail&method=get&version=2&SynoToken=NXibb.RkEVsCY'
+        # logger.info(url)
+        headers[
+            'Accept'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+        headers['Accept-Encoding'] = 'gzip, deflate'
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            return response.content
+        else:
+            logger.info(response.content)
+        return None
+    except Exception as e:
+        logger.exception(e)
+        return None
 
 
 def create_tag(tag_name):
-    url = f'{base_url}/webapi/entry.cgi/{api_pre}.Browse.GeneralTag'
-    data = {
-        'api': f'{api_pre}.Browse.GeneralTag',
-        'method': 'create',
-        'version': '1',
-        'name': tag_name,
-    }
-    response = requests.post(url, data, headers=headers)
-    data = json.loads(response.content)
-    if data['success']:
-        text = _("tag generate success:")
-        logger.info(f'{text} {tag_name}')
-        tags.append(data['data']['tag'])
-    else:
-        if data['error']['code'] in token_error_code:
-            get_token()
-        text = _("tag generate failed")
-        logger.info(f'{text}: {tag_name}')
+    try:
+        url = f'{base_url}/webapi/entry.cgi/{api_pre}.Browse.GeneralTag'
+        data = {
+            'api': f'{api_pre}.Browse.GeneralTag',
+            'method': 'create',
+            'version': '1',
+            'name': tag_name,
+        }
+        response = requests.post(url, data, headers=headers)
+        data = json.loads(response.content)
+        if data['success']:
+            text = _("tag generate success:")
+            logger.info(f'{text} {tag_name}')
+            tags.append(data['data']['tag'])
+        else:
+            if data['error']['code'] in token_error_code:
+                get_token()
+            text = _("tag generate failed")
+            logger.info(f'{text}: {tag_name}')
+    except Exception as e:
+        logger.exception(e)
 
 
 def bind_tag(id, tag_id, tag_name):
@@ -170,21 +185,25 @@ def get_tag_id_by_name(tag_name):
 
 
 def get_photo_info_by_id(id):
-    url = f'{base_url}/webapi/entry.cgi/SYNO.FotoTeam.Browse.Item'
-    params = {
-        'api': f'SYNO.{api_pre}.Browse.Item',
-        'method': 'get',
-        'version': 2,
-        'id': f'[{id}]',
-        'additional': ["tag"]
-    }
-    # 发送请求
-    response = requests.get(url, params=params, headers=headers)
-    # 解析响应结果
-    result = response.json()
-    if result['success']:
-        return result['data']['list'][0]
-    return None
+    try:
+        url = f'{base_url}/webapi/entry.cgi/SYNO.FotoTeam.Browse.Item'
+        params = {
+            'api': f'SYNO.{api_pre}.Browse.Item',
+            'method': 'get',
+            'version': 2,
+            'id': f'[{id}]',
+            'additional': ["tag"]
+        }
+        # 发送请求
+        response = requests.get(url, params=params, headers=headers)
+        # 解析响应结果
+        result = response.json()
+        if result['success']:
+            return result['data']['list'][0]
+        return None
+    except Exception as e:
+        logger.exception(e)
+        return None
 
 
 def remove_tags(id, tag_ids):
