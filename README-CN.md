@@ -1,5 +1,12 @@
 # MeowAI
 
+![GitHub release (release name instead of tag name)](https://img.shields.io/github/v/release/charlie-captain/MeowAI?include_prereleases)
+![GitHub last commit](https://img.shields.io/github/last-commit/charlie-captain/MeowAI)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/charlie-captain/MeowAI)
+![Docker Stars](https://img.shields.io/docker/stars/charliecaptain/meowai-image)
+![GitHub Repo stars](https://img.shields.io/github/stars/charlie-captain/MeowAI)
+![GitHub](https://img.shields.io/github/license/charlie-captain/MeowAI)
+
 使用Yolov5离线检测图片并在Synology Photos上对图片添加标签，支持识别80种场景
 
 ## 原理
