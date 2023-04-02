@@ -13,9 +13,8 @@ from src.log.logger import logger
 score_threshold = 0.7
 offset = 0
 limit = 100
-# 识别成功列表
-detect_list = []
-done_list = []
+max_limit = 500
+total_done_list = []
 _ = locale.lc
 _executor: Optional[executor.DetectExecutor] = None
 
@@ -61,31 +60,36 @@ class DetectFileDecoder(json.JSONDecoder):
 
 def start_indexing():
     global offset
-    global detect_list
     has_more = True
+    _limit = limit
     while True:
         while has_more:
-            list = api.get_photos(offset, limit)
+            list = api.get_photos(offset, _limit)
             has_more = list is not None and len(list) > 0
             if not has_more:
                 break
-            detect_photo_list(list)
-            offset += limit
-            text_info = _("Detect %d images, total handle %d photos")
-            logger.info(f'{text_info}', len(detect_list), len(done_list))
-            detect_list = []
-        text_sleep = _("Sleep...")
-        logger.info(text_sleep)
-        # sleep for a while
-        time.sleep(60 * 5)
+            detect_list, done_list = detect_photo_list(list)
+            offset += len(list)
+            if len(done_list) == 0:
+                # If all files are skipped, increase limit
+                _limit = max_limit
+            else:
+                _limit = limit
+            text_info = _("Detect %d images, handle %d photos, total handle %d photos")
+            logger.info(f'{text_info}', len(detect_list), len(done_list), len(total_done_list))
         # check has more
         total = api.count_total_photos()
-        if total > len(done_list):
+        if total > len(total_done_list):
             has_more = True
             text_wake = _("Wake...")
             logger.info(text_wake)
             # reset offset
             offset = 0
+        else:
+            text_sleep = _("Sleep...")
+            logger.info(text_sleep)
+            # sleep for a while
+            time.sleep(60 * 5)
 
 
 def detect_photo(id, p):
@@ -111,7 +115,7 @@ def detect_photo(id, p):
 
 
 def detect_photo_list(list):
-    global detect_list
+    detect_list = []
     start_time = time.time()
     for i, p in enumerate(list):
         id = p['id']
@@ -126,8 +130,9 @@ def detect_photo_list(list):
             detect_list.append(value)
         done_list.append(value)
     end_time = time.time()
-    logger.debug(f'detect_photo_list cost = {end_time - start_time}s')
+    logger.debug(f'detect_photo_list cost = {round(end_time - start_time, 2)}s')
     add_to_done_list(done_list)
+    return detect_list, done_list
 
 
 def read_done_list():
@@ -135,10 +140,10 @@ def read_done_list():
         done_list_file = get_done_list_file_path()
         with open(done_list_file, 'r') as f:
             data = json.load(f, cls=DetectFileDecoder)
-        global done_list
-        done_list = data
+        global total_done_list
+        total_done_list = data
         text_done = _("read done_list: ")
-        logger.info(f'{text_done}{len(done_list)}')
+        logger.info(f'{text_done}{len(total_done_list)}')
     except FileNotFoundError:
         os.mknod(done_list_file)
         logger.info(_("done_list created！"))
@@ -153,7 +158,7 @@ def get_done_list_file_path():
 
 
 def has_done(id):
-    for d in done_list:
+    for d in total_done_list:
         if d.id == id and d.model == detect.model_name and (
                 d.tag is not None or (d.tag is None and d.model == detect.model_name)):
             return True
@@ -164,9 +169,9 @@ def add_to_done_list(list):
     if len(list) == 0:
         return
     for done in list:
-        done_list.append(done)
+        total_done_list.append(done)
     with open(get_done_list_file_path(), 'w') as f:
-        json.dump(done_list, f, cls=DetectFileEncoder, ensure_ascii=False)
+        json.dump(total_done_list, f, cls=DetectFileEncoder, ensure_ascii=False)
 
 
 def bind_tag(id, tag_name, exist_tags):

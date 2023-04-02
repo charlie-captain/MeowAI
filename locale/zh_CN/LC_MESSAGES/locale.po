@@ -43,8 +43,8 @@ msgstr "标签移除失败:"
 
 #: src/api/server.py:63
 #, python-format
-msgid "Detect %d images, total handle %d photos"
-msgstr "识别成功 %d 张图片, 共处理 %d 张图片"
+msgid "Detect %d images, handle %d photos, total handle %d photos"
+msgstr "识别成功 %d 张图片, 处理 %d 张图片, 共处理 %d 张图片"
 
 #: src/api/server.py:82
 #, python-format
