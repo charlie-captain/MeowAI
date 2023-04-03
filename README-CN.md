@@ -110,7 +110,10 @@ https://github.com/zeichensatz/SynologyPhotosAPI
 
 TRC20(USDT): TKRJkxUWYnnjLXVjN5Nutk6cvZ3Nz3S9pv
 
-<img src="images/1679625687777.JPG" width="50%" />
+[爱发电支持我](https://afdian.net/a/richardmike)
+
+[![Ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/charliecaptain)
+
 
 ## License
 
