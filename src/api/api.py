@@ -4,7 +4,7 @@ import os
 
 import requests
 
-from src.detect import detect_dict
+from src.api import error_codes
 from src.locale import locale
 from src.log.logger import logger
 
@@ -42,7 +42,8 @@ def get_token():
                 'X-SYNO-TOKEN': token,
             }
         else:
-            logger.error(response.content)
+            error_msg = get_error_message(data)
+            logger.error(error_msg)
     except Exception as e:
         logger.error(e)
 
@@ -65,7 +66,7 @@ def get_tags():
         else:
             if data['error']['code'] in token_error_code:
                 get_token()
-            logger.info(response.content)
+            logger.error(get_error_message(data))
         return []
     except Exception as e:
         logger.exception(e)
@@ -98,7 +99,7 @@ def get_photos(offset, limit):
         else:
             if data['error']['code'] in token_error_code:
                 get_token()
-            logger.error(response.content)
+            logger.error(get_error_message(data))
             return None
     except Exception as e:
         logger.exception(e)
@@ -256,13 +257,31 @@ def count_total_photos():
         else:
             if data['error']['code'] in token_error_code:
                 get_token()
-            text = _("get_time_line failed:")
-            logger.error(f'{text}')
+            text = _("count_total_photos failed:")
+            error_msg = get_error_message(data)
+            logger.error(f'{text} %s', error_msg)
             return 0
     except Exception as e:
-        text = _("get_time_line failed:")
+        text = _("count_total_photos failed:")
         logger.error(f'{text} %s', e)
         return 0
+
+
+def get_error_code(response: dict[str, object]) -> int:
+    if response.get('success'):
+        code = error_codes.CODE_SUCCESS
+    else:
+        code = response.get('error').get('code')
+    return code
+
+
+def get_error_message(response: dict[str, object]) -> str:
+    code = get_error_code(response)
+    if code in error_codes.error_codes.keys():
+        message = error_codes.error_codes[code]
+    else:
+        message = error_codes.auth_error_codes.get(code, response)
+    return 'Error {} - {}'.format(code, message)
 
 
 def init_var():

@@ -27,7 +27,8 @@ def init_log():
     file_handler.setLevel(level)
 
     # 创建一个Formatter对象，指定日志格式
-    formatter = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
+    format = '%(asctime)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s'
+    formatter = logging.Formatter(format, datefmt='%Y-%m-%d %H:%M:%S')
 
     # 为两个Handler对象设置Formatter对象
     stream_handler.setFormatter(formatter)
