@@ -50,7 +50,15 @@ Docker将比上面的 shell 命令运行更久，因为它会永远监控新照�
 2. 运行Docker容器
 
    ```shell
-    docker run -it --name meowai -e user="xxx" -e pwd="xxx" --network host meowai_image
+    docker run -it
+            --name meowai \
+            -e user="xxx" \
+            -e pwd="xxx" \
+            -e mode="person" \
+            -e exclude_class="[\"cat\",\"dog\"]" \
+            -e model='yolov5s6' \
+            --network host \
+            meowai_image
     ```
 
 ### Synology DSM
@@ -77,6 +85,14 @@ Docker将比上面的 shell 命令运行更久，因为它会永远监控新照�
 | exclude_class | 排除识别的场景(80种), 具体看src/detect/detect_dict.py | ['cat','dog']      | false(default [])             |
 | model         | 模型数据集                                            | yolov5m6           | false(default yolov5m6)       |
 | lang          | 标签语言                                              | zh(中文)/en(英文)  | false(default en)             |
+
+#### 模型选择
+
+Yolov5的预训练的模型都可以选择，程序会自动下载到环境中。
+
+直接运行python文件则可以运行更大的模型，因为GPU参与运算，速度会比Docker容器快很多。
+
+Docker中运行最好是yolov5s6，平均2秒左右识别速度。
 
 ## 开发
 

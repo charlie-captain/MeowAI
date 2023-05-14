@@ -54,12 +54,13 @@ Docker will run longer than the shell command above because it will forever moni
 
     ```shell
     docker run -it 
-            --name meowai 
-            -e user="xxx" 
-            -e pwd="xxx" 
-            -e mode="person" 
-            -e exclude_class="[\"cat\",\"dog\"]"
-            --network host 
+            --name meowai \
+            -e user="xxx" \
+            -e pwd="xxx" \
+            -e mode="person" \
+            -e exclude_class="[\"cat\",\"dog\"]" \
+            -e model='yolov5m6' \
+            --network host \
             meowai_image
     ```
 
@@ -78,7 +79,7 @@ This will consume your CPU resources.
 ### Arguments
 
 | Argument      | Description                                          | Demo               | Require                       |
-|---------------|------------------------------------------------------|--------------------|-------------------------------|
+| ------------- | ---------------------------------------------------- | ------------------ | ----------------------------- |
 | user          | login user                                           | -                  | true                          |
 | pwd           | login password                                       | -                  | true                          |
 | ip            | nas ip                                               | 0.0.0.0:5000       | false(default 127.0.0.1:5000) |
@@ -86,6 +87,14 @@ This will consume your CPU resources.
 | exclude_class | exclude detect scenes, see src/detect/detect_dict.py | ['cat','dog']      | false(default [])             |
 | model         | yolov5 model pt file name                            | yolov5m6           | false(default yolov5m6)       |
 | lang          | tag language                                         | zh/en              | false(default en)             |
+
+### Model
+
+Pretrained models for YOLOv5 can be selected and will be automatically downloaded to the environment.
+
+Running the Python file directly allows for the use of larger models with the participation of the GPU, resulting in significantly faster processing speeds compared to running within a Docker container. 
+
+Docker is best suited for running yolov5s6, which has an average recognition speed of about 2 seconds.
 
 ## Dev
 

@@ -132,4 +132,5 @@ done_list.json
 make_docker.sh
 .idea
 .DS_Store
+test.py
 

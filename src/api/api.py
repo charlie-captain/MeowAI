@@ -1,6 +1,7 @@
 import gettext
 import json
 import os
+from typing import Dict
 
 import requests
 
@@ -267,7 +268,7 @@ def count_total_photos():
         return 0
 
 
-def get_error_code(response: dict[str, object]) -> int:
+def get_error_code(response: Dict[str, object]) -> int:
     if response.get('success'):
         code = error_codes.CODE_SUCCESS
     else:
@@ -275,7 +276,7 @@ def get_error_code(response: dict[str, object]) -> int:
     return code
 
 
-def get_error_message(response: dict[str, object]) -> str:
+def get_error_message(response: Dict[str, object]) -> str:
     code = get_error_code(response)
     if code in error_codes.error_codes.keys():
         message = error_codes.error_codes[code]

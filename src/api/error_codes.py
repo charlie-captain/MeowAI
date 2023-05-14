@@ -1,5 +1,6 @@
 # source: pages 8 and 16 on PDF:
 # https://global.download.synology.com/download/Document/Software/DeveloperGuide/Os/DSM/All/enu/DSM_Login_Web_API_Guide_enu.pdf
+from typing import Dict
 
 # NOTE: https://global.synologydownload.com/download/Document/Software/DeveloperGuide/Package/Calendar/2.4/enu
 # /Synology_Calendar_API_Guide_enu.pdf, Refers to common error code # 160, "Insufficient application privilege" Page 10.
@@ -69,7 +70,7 @@ error_codes = {
 # https://global.download.synology.com/download/Document/Software/DeveloperGuide/Package/SurveillanceStation/All/enu
 # /Surveillance_Station_Web_API.pdf Pages 32,33 Refers to Auth error code #411: 'Account Locked (when account max try
 # exceed).'
-auth_error_codes: dict[int, str] = {
+auth_error_codes: Dict[int, str] = {
     400: 'No such account or incorrect password',
     401: 'Disabled account',
     402: 'Denied permission',
@@ -85,7 +86,7 @@ auth_error_codes: dict[int, str] = {
 
 # Source:https://global.download.synology.com/download/Document/Software/DeveloperGuide/Package/DownloadStation/All/enu/Synology_Download_Station_Web_API.pdf
 # Page 29
-download_station_error_codes: dict[int, str] = {
+download_station_error_codes: Dict[int, str] = {
     400: 'File upload failed',
     401: 'Max number of tasks reached',
     402: 'Destination denied',
@@ -99,7 +100,7 @@ download_station_error_codes: dict[int, str] = {
 
 # TODO use the error code source https://cndl.synology.cn/download/Document/Software/DeveloperGuide/Package
 #  /FileStation/All/enu/Synology_File_Station_API_Guide.pdf page 10~11
-file_station_error_codes: dict[int, str] = {
+file_station_error_codes: Dict[int, str] = {
     400: 'Invalid parameter of file operation',
     401: 'Unknown error of file operation',
     402: 'System is too busy',
@@ -127,7 +128,7 @@ file_station_error_codes: dict[int, str] = {
 
 # Source: https://global.synologydownload.com/download/Document/Software/DeveloperGuide/Package/Virtualization/All
 # /enu/Synology_Virtual_Machine_Manager_API_Guide.pdf Page 8,9
-virtualization_error_codes: dict[int, str] = {
+virtualization_error_codes: Dict[int, str] = {
     401: 'Bad parameter.',
     402: 'Operation failed.',
     403: 'Name conflict.',
@@ -159,7 +160,7 @@ virtualization_error_codes: dict[int, str] = {
 
 # Source: https://global.synologydownload.com/download/Document/Software/DeveloperGuide/Package/Calendar/2.4/enu
 # /Synology_Calendar_API_Guide_enu.pdf Pages 10,11.
-calendar_error_codes: dict[int, str] = {
+calendar_error_codes: Dict[int, str] = {
     400: 'Invalid parameter of file operation',
     401: 'Unknown error of file operation',
     402: 'System is too busy',
@@ -191,7 +192,7 @@ calendar_error_codes: dict[int, str] = {
 # different methods, all the error codes I found are on # Pages: 71, 81, 85, 93, 103, 113, 131, 132, 139, 144, 155,
 # 167, 169, 176, 187, 190, 191, 201, 211, 212, 217, 222, 227, #         241, 245, 249, 253, 264, 279, 281, 305, 314,
 # 321, 328, 363, 365, 368, 369, 393, 395, 397, 403, 410, 412, 415, #         419, 430, 451, 473, 539, 556
-surveillance_station_error_codes: dict[int, str] = {
+surveillance_station_error_codes: Dict[int, str] = {
     400: 'Execution failed.',
     401: 'Parameter invalid.',
     402: 'Camera disabled.',
