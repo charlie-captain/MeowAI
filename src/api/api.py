@@ -31,7 +31,7 @@ def get_token():
     global cookie
     global token
     global headers
-    url = f'{base_url}/photo/webapi/auth.cgi?api=SYNO.API.Auth&version=3&method=login&account={username}&passwd={pwd}&enable_syno_token=yes'
+    url = f'{base_url}/webapi/auth.cgi?api=SYNO.API.Auth&session=Foto&version=7&method=login&account={username}&passwd={pwd}&format=cookie&enable_syno_token=yes'
     response = requests.get(url)
     try:
         data = json.loads(response.content)
