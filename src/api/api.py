@@ -31,7 +31,8 @@ def get_token():
     global cookie
     global token
     global headers
-    url = f'{base_url}/webapi/auth.cgi?api=SYNO.API.Auth&version=3&method=login&account={username}&passwd={pwd}&format=cookie&enable_syno_token=yes'
+    otp_code = os.environ.get('otp', '')
+    url = f'{base_url}/webapi/auth.cgi?api=SYNO.API.Auth&version=6&method=login&account={username}&passwd={pwd}&format=cookie&enable_syno_token=yes&otp_code={otp_code}'
     response = requests.get(url)
     try:
         data = json.loads(response.content)
@@ -43,6 +44,20 @@ def get_token():
                 'X-SYNO-TOKEN': token,
             }
         else:
+            code = str(data.get('error', {}).get('code', ''))
+            if code == '403':
+                otp_code = input('Enter 2FA OTP code: ').strip()
+                url = f'{base_url}/webapi/auth.cgi?api=SYNO.API.Auth&version=6&method=login&account={username}&passwd={pwd}&format=cookie&enable_syno_token=yes&otp_code={otp_code}'
+                response = requests.get(url)
+                data = json.loads(response.content)
+                if data['success']:
+                    cookie = response.headers.get('Set-Cookie')
+                    token = data['data']['synotoken']
+                    headers = {
+                        'Cookie': cookie,
+                        'X-SYNO-TOKEN': token,
+                    }
+                    return
             error_msg = get_error_message(data)
             logger.error(error_msg)
     except Exception as e:
